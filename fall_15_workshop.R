@@ -214,9 +214,9 @@ summary(forbes$sales)
 # Data Manipulation -------------------------------------------------------
 
 # Here's how to change column names:
-names(forbes)
-names(forbes)[2]
-names(forbes)[2] <- "company"
+names(forbes) # view column names
+names(forbes)[2] # view 2nd column name
+names(forbes)[2] <- "company"  # assign "company" as 2nd column name
 names(forbes)
 
 # extract two columns and make a new data frame called forbes.sales;
@@ -271,12 +271,15 @@ sort(forbes$assets[1:10])
 # sorting data frames in R takes some getting used to;
 # use the order function; order top.sales by sales
 order(top.sales$sales) # returns indices of ordered elements (ascending)
-top.sales[order(top.sales$sales),] # shows ordered data frame
+
+# we can use the results of order() to sort a data frame:
+# sort the top.sales data frame by sales:
+top.sales[order(top.sales$sales),] 
 top.sales[order(top.sales$sales, decreasing=TRUE),] # in descending order
 
 
 # subsetting data using subset function
-# subset(data, selection conditions, which columns to keep)
+# syntax: subset(data, selection conditions, which columns to keep)
 
 # see the Japanese companies
 subset(forbes, country == "Japan", company)
@@ -293,6 +296,7 @@ head(JapanComp)
 # deriving new variables
 # adding columns (variables)
 forbes$totalcosts <- forbes$sales - forbes$profits
+head(forbes[,c("company","sales","profits","totalcosts")])
 
 # create categories (factors) from continuous variables with the cut function 
 # divide the range of sales into 4 intervals of equal length
@@ -353,7 +357,7 @@ load("forbes.Rda")
 # Descriptive Statistics such as contingency tables and summary stats
 
 # for contingency tables (or cross tabs) use the table function
-# table(row variable, column variable)
+# synatx: table(row variable, column variable)
 
 # cross tab of categories vs. sales percentile categories
 table(forbes$category, forbes$salesP)
@@ -427,6 +431,7 @@ boxplot(log(marketvalue) ~ US, data=forbes, main="Market Value")
 # good for visualizing counts
 summary(forbes$category)
 dotchart(summary(forbes$category))
+dotchart(sort(summary(forbes$category))) # sorted
 
 # See StatLab Past Workshops for an Intro to R Graphics:
 # http://data.library.virginia.edu/workshops/past-workshops/
@@ -439,9 +444,9 @@ dotchart(summary(forbes$category))
 # recall this plot; this time we make it gray
 plot(log(marketvalue) ~ log(assets), data=forbes, col="gray")
 
-# Is there a relationship between assets and market value?
-# can we summarize it with a straight line?
-# can use the scatter.smooth function to fit a smooth line through data
+# Is there a relationship between assets and market value? can we summarize it
+# with a straight line? We can use the scatter.smooth function to make scatter plot
+# and add a fitted smooth line
 scatter.smooth(x=log(forbes$assets),
                y=log(forbes$marketvalue),
                col="gray")
@@ -449,7 +454,7 @@ scatter.smooth(x=log(forbes$assets),
 # lm(response ~ independent variables)
 lm(log(marketvalue) ~ log(assets), data=forbes) 
 
-# save the model and view a summary:
+# save the model (ie, create a model object) and view a summary:
 mod <- lm(log(marketvalue) ~ log(assets), data=forbes) 
 summary(mod) 
 confint(mod) # 95% confidence interval for model coefficients
@@ -460,8 +465,8 @@ abline(mod, col="blue") # add the regression line to the plot
 # Four diagnostic plots
 plot(mod) 
 
-# Intrigued? Come to the Linear Modeling in R workshop in October:
-# http://data.library.virginia.edu/statlab/workshops/
+# Want to learn more? See the Linear Modeling in R workshop from October 2014:
+# http://static.lib.virginia.edu/statlab/materials/workshops/LinearModelingR.zip
 rm(mod)
 
 # chi-square test of independence
@@ -501,8 +506,8 @@ t.test(fvc, mu = 3.4, alternative = "greater")
 
 # Come to R for the price, stay for the packages.
 
-# What packages are available? See the CRAN Task Views:
-# http://cran.r-project.org/web/views/
+# What packages are available?:
+# https://cran.r-project.org/web/packages/available_packages_by_name.html
 
 # To install a package in RStudio:
 

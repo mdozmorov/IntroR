@@ -49,9 +49,9 @@ R uses *functions* to perform operations.
 
 Functions take *arguments* to specify how operations are performed.
 
-Example: `read.csv(file="scores.csv", header=TRUE)`
+Example: `read.csv(file="scores.csv")`
 
-`read.csv` is a function to import a CSV file; `file` and `header` are arguments.
+`read.csv` is a function to import a CSV file; `file` is an argument.
 
 R has **many** functions. Fortunately about 20% of them do about 80% of the work.
 
@@ -61,7 +61,7 @@ We often need to save a function's result or output. For this we use the assignm
 
 For example, when you import a CSV file you need to give it a name:
 
-`scoreData <- read.csv(file="scores.csv", header=TRUE)`
+`scoreData <- read.csv(file="scores.csv")`
 
 Now we can use `scoreData` as an argument to other functions. For example: `summary(scoreData)` which computes summaries for each column in the data.
 
@@ -69,9 +69,7 @@ Now we can use `scoreData` as an argument to other functions. For example: `summ
 
 ## R basics - objects
 
-R creates and manipulates *objects*. Examples of objects are vectors, data frames, matrices and lists.
-
-You can create as many objects as memory allows.
+R creates and manipulates *objects*. Examples of objects are vectors, data frames, matrices and lists. You can create as many objects as memory allows.
 
 ```{r}
 # create vector of character strings
@@ -81,14 +79,16 @@ gender <- c("Male","Female","Male")
 x <- seq(0, 10, by=2) 
 
 # create data frame
-forbes <- read.csv("Forbes2000.csv") 
+forbes <- read.csv("Forbes2000.csv")  
+
+# perform a t-test and save results in a list
+tout <- t.test(extra ~ group, data = sleep)
 ```
 
-Note: Text prefaced with `#` are comments and ignored by R. 
 
 ## R basics - packages
 
-All functions belong to *packages*. R comes with about 25 packages, but as of August 2014, there are *over 5800* user-contributed packages!
+All functions belong to *packages*. R comes with about 30 packages, but as of August 2015, there are *over 7000* user-contributed packages!
 
 To use functions in a package, the package must be installed and loaded. 
 
