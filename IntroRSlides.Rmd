@@ -1,0 +1,175 @@
+---
+title: "Introduction to R"
+author: "Clay Ford"
+date: "Fall 2015"
+output: beamer_presentation
+---
+
+## Today's workshop
+
+R Learning objectives:
+
+- read in and manipulate basic data
+- basic statistics
+- some graphing
+
+My goal is to teach you how to do basic data analysis in R and get you comfortable enough to help yourself go further with R.
+
+
+## Introducing R
+
+- R is a language and environment for statistical computing and graphics
+- Freely available and maintained by volunteers
+- R is extensible; can be expanded by installing "packages" or by creating your own "functions"
+- Frequently used with RStudio, a free IDE (Interactive Development Environment) for R
+
+
+## How to get R and RStudio
+
+**R**: http://cran.r-project.org/ (or better yet, Google “Download R”)
+
+**RStudio**: http://www.rstudio.com/ 
+
+Both are available for Windows, Mac, and Linux and free to install (no catches).
+
+If you install R and RStudio, then you only need to run RStudio.
+
+
+## Using R
+
+- command-line driven (*very* little point-and-click)
+- use "functions" to work with data
+- can work interactively (one function at a time) or write a script to submit multiple functions at once
+- requires time and effort to learn, but RStudio makes the process easier
+
+
+## R basics - functions
+
+R uses *functions* to perform operations.
+
+Functions take *arguments* to specify how operations are performed.
+
+Example: `read.csv(file="scores.csv", header=TRUE)`
+
+`read.csv` is a function to import a CSV file; `file` and `header` are arguments.
+
+R has **many** functions. Fortunately about 20% of them do about 80% of the work.
+
+## R basics - assignment
+
+We often need to save a function's result or output. For this we use the assignment operator: ` <- `
+
+For example, when you import a CSV file you need to give it a name:
+
+`scoreData <- read.csv(file="scores.csv", header=TRUE)`
+
+Now we can use `scoreData` as an argument to other functions. For example: `summary(scoreData)` which computes summaries for each column in the data.
+
+**Note**: Use `Alt + -` in RStudio to quickly insert ` <- `. You can also use `=` for assignment.
+
+## R basics - objects
+
+R creates and manipulates *objects*. Examples of objects are vectors, data frames, matrices and lists.
+
+You can create as many objects as memory allows.
+
+```{r}
+# create vector of character strings
+gender <- c("Male","Female","Male") 
+
+# create vector of numbers
+x <- seq(0, 10, by=2) 
+
+# create data frame
+forbes <- read.csv("Forbes2000.csv") 
+```
+
+Note: Text prefaced with `#` are comments and ignored by R. 
+
+## R basics - packages
+
+All functions belong to *packages*. R comes with about 25 packages, but as of August 2014, there are *over 5800* user-contributed packages!
+
+To use functions in a package, the package must be installed and loaded. 
+
+You only install a package once. You load a package whenever you want to use its functions.
+
+Examples of packages that come with R:
+
+- The `stats` package contains statistical functions
+- The `foreign` package contains functions for reading data from other statistical programs
+- The `graphics` package contains functions for creating graphics
+
+
+## R in a Nutshell
+
+**Use functions in various packages to create and manipulate objects**.
+
+So we need to learn...
+
+- some useful functions
+- how to install and load packages
+- about different R objects
+- how to use RStudio
+- how to get help
+
+Let's open up RStudio and get started!
+
+## A selection of R Commands
+
+![functions](functions.jpg)
+
+Download the R Reference Card: 
+
+https://cran.r-project.org/doc/contrib/Short-refcard.pdf
+
+## Helpful RStudio keyboard shortcuts
+
+- `Ctrl + Enter` to submit code
+- `Tab` key to let RStudio finish typing commands for you
+- `Shift + down arrow` to highlight lines or blocks of code
+- `Ctrl + 1` and `Ctrl + 2` to switch between script and console
+- up and down arrows cycle through previous commands in console
+- `Ctrl + Shift + C` to comment/uncomment a block of lines
+- `Ctrl + L` to clear the console
+
+More: Help - Keyboard Shortcuts
+
+## Keep Going!
+
+- Join the UVa R Users Group: http://www.meetup.com/UVa-R-Users-Group/
+
+- Sign up for the R-Bloggers daily email: http://www.r-bloggers.com/
+
+- Lander, J., *R for Everyone*, Addison-Wesley, 2014.
+
+- Teetor, P., *R Cookbook*, O'Reilly, 2011.
+
+- Coursera's *Computing for Data Analysis*: https://www.coursera.org/course/compdata
+
+
+## Check out these web sites
+
+- Contributed Documentation: http://cran.r-project.org/other-docs.html
+
+- Quick-R: http://www.statmethods.net/
+
+- Cookbook for R: http://www.cookbook-r.com/
+
+- R-statistics blog: http://www.r-statistics.com/
+
+- The R Journal: http://journal.r-project.org/
+
+- UCLA R Starter Kit: http://www.ats.ucla.edu/stat/r/sk/
+
+
+## StatLab
+
+Thanks for coming today!
+
+For help and advice with your data analysis, contact the StatLab to set up an appointment: statlab@virginia.edu
+
+Sign up for more workshops or see past workshops:
+http://data.library.virginia.edu/statlab/
+
+Register for the Research Data Services newsletter to stay up-to-date on StatLab events and resources: http://data.library.virginia.edu/newsletters/
