@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+data/
+resources/
+*.docx
+*.pptx
+*.pdf
+*.zip
+*.jpg
+
