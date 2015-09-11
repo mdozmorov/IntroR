@@ -8,20 +8,9 @@
 # RStudio layout ---------------------------------------------------------
 
 # top left: R script (text file with R code) 
-# top right: objects in memory bottom
-# left: console (output and interactive work) 
+# top right: objects in memory 
+# bottom left: console (output and interactive work) 
 # bottom right: plots, packages and help
-
-
-# If you want to follow along, please download the workshop files: 
-  
-# 1. Go to http://data.library.virginia.edu/statlab/workshops/ 
-
-# 2. Click Download Workshop Materials link to download zip file containing materials
-
-# 3. Unzip the files to a convenient folder on your computer. You should have a
-# CSV file, a PDF file and an R file.
-
 
 
 # R can be a calculator ---------------------------------------------------

@@ -7,18 +7,20 @@ output: beamer_presentation
 
 ## Today's workshop
 
-R Learning objectives:
+Teach you how to:
 
-- read in and manipulate basic data
-- basic statistics
-- some graphing
+- read in and manipulate tabular data
+- do some basic statistics
+- do some graphing
 
-My goal is to teach you how to do basic data analysis in R and get you comfortable enough to help yourself go further with R.
+I'm assuming you're new to R.
+
+The ultimate goal: get you comfortable enough to help yourself go further with R.
 
 
 ## Introducing R
 
-- R is a language and environment for statistical computing and graphics
+- R is an environment for statistical computing and graphics that has a programming language
 - Freely available and maintained by volunteers
 - R is extensible; can be expanded by installing "packages" or by creating your own "functions"
 - Frequently used with RStudio, a free IDE (Interactive Development Environment) for R
@@ -32,7 +34,7 @@ My goal is to teach you how to do basic data analysis in R and get you comfortab
 
 Both are available for Windows, Mac, and Linux and free to install (no catches).
 
-If you install R and RStudio, then you only need to run RStudio.
+**If you install R and RStudio, then you only need to run RStudio.**
 
 
 ## Using R
@@ -54,6 +56,20 @@ Example: `read.csv(file="scores.csv")`
 `read.csv` is a function to import a CSV file; `file` is an argument.
 
 R has **many** functions. Fortunately about 20% of them do about 80% of the work.
+
+
+## R basics - running functions
+
+You can run functions two ways:
+
+1. In the console at the command line; type the function and hit Enter
+2. In an R script; type the function and (with cursor on same line as code) hit Ctrl + Enter (Command + Enter on Mac)
+
+An R script is a text file that contains all your R code. R scripts allow you to save, edit, reproduce and share your code.
+
+Today's workshop will be centered around an R script I wrote in advance.
+
+
 
 ## R basics - assignment
 
