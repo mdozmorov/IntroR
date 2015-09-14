@@ -15,7 +15,7 @@ Teach you how to:
 
 I'm assuming you're new to R.
 
-The ultimate goal: get you comfortable enough to help yourself go further with R.
+The goal: get you comfortable enough to help yourself go further with R.
 
 
 ## Introducing R
@@ -36,13 +36,6 @@ Both are available for Windows, Mac, and Linux and free to install (no catches).
 
 **If you install R and RStudio, then you only need to run RStudio.**
 
-
-## Using R
-
-- command-line driven (*very* little point-and-click)
-- use "functions" to work with data
-- can work interactively (one function at a time) or write a script to submit multiple functions at once
-- requires time and effort to learn, but RStudio makes the process easier
 
 
 ## R basics - functions

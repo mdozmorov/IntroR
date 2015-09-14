@@ -7,6 +7,7 @@
 
 # RStudio layout ---------------------------------------------------------
 
+# The DEFAULT layout
 # top left: R script (text file with R code) 
 # top right: objects in memory 
 # bottom left: console (output and interactive work) 
@@ -23,9 +24,6 @@
 5 %% 2 # modulo (ie, remainder of division)
 5 %/% 2 # integer division
 
-# can also use the console. Try it.
-
-
 # Typing and submitting functions -----------------------------------------
 
 # Example: the log function (default is natural log)
@@ -34,7 +32,8 @@ log(27)
 log(1000, base=10)
 log(27) + 4
 
-# on the blank line below, or in the console, type "log" and hit Tab:
+# on the blank line below, or in the console, type "log" and see what Rstudio
+# does for you:
 
 # functions that begin with "log" appear along with help.
 # The word next to the function in curly braces is the package it's in.
@@ -57,7 +56,7 @@ log(x) + log(y)
 
 # Your Turn: assign the value of x/y to z
 # RStudio shortcut: Alt + - inserts "<-", Try it!
-
+z <- x/y
 
 # the rm function removes objects from memory
 rm(x, y, z)
@@ -75,7 +74,7 @@ help(log)
 # Your working directory is where R will save output or look for input unless
 # told otherwise.
 
-# See your working directory with getwd function
+# See your working directory with getwd function.
 # notice the parentheses! 
 getwd() 
 
@@ -89,7 +88,7 @@ getwd()
 # "~/" is your home directory
 
 # Try setting your working directory using setwd():
-
+setwd("~/_workshops/IntroR/")
 
 # Loading/Importing Data --------------------------------------------------
 
@@ -103,7 +102,7 @@ getwd()
 forbes <- read.csv("Forbes2000.csv")
 
 # (2) read from web site 
-forbes <- read.csv("https://github.com/clayford/IntroR/raw/master/Forbes2000.csv")
+forbes <- read.csv("http://people.virginia.edu/~jcf2d/workshops/R/Forbes2000.csv")
 
 # (3) use the RStudio "Import Dataset" button in the Environment window
 
@@ -122,7 +121,7 @@ forbes <- read.csv("https://github.com/clayford/IntroR/raw/master/Forbes2000.csv
 # Another way: enter the name in the console and hit Enter.
 # Try it and see what happens.
 
-# Good time to introduce this keyboard shortcut:
+# Good time to remind you of this keyboard shortcut:
 # Ctrl + L/Command + L to clear console
 
 
@@ -138,11 +137,10 @@ tail(forbes) # last 6 records
 summary(forbes) # summary of variables
 dim(forbes) # dimensions of data frame
 
-# Try the following functions on the forbes data frame in the console:
-# names
-# nrow
-# ncol
-# what do they return?
+# You can probably tell what these functions do:
+names(forbes)
+nrow(forbes)
+ncol(forbes)
 
 
 # Working with columns/rows of data ---------------------------------------
@@ -157,14 +155,17 @@ forbes[1:6,1:2]
 forbes[1:6,] 
 # columns 2 and 3
 forbes[,2:3] 
-# columns 2, 4, and 6
-forbes[,c(2,4,6)]
+# rows 10 and 11, columns 2, 4, and 6
+forbes[c(10,11),c(2,4,6)]
 
 # can also use column names
 forbes[1:6,c("name","category")]
 
-# first 10 records and all but first column (rank)
-forbes[1:10,-1]
+# first 5 records and all but first column (rank)
+forbes[1:5,-1]
+
+# first 5 records and all but last two columns (assets and marketvalue)
+forbes[1:5,-c(7,8)]
 
 # last row without typing the row number:
 forbes[nrow(forbes),]
@@ -173,7 +174,7 @@ forbes[nrow(forbes),]
 forbes$name
 forbes$name[1:10] # first 10
 
-# On the next line type forbes$ and hit Tab. What happens?
+# On the next line type forbes$. What happens?
 
 
 # recall forbes$category was a factor (ie, categorical variable)
@@ -199,6 +200,7 @@ quantile(forbes$sales)
 quantile(forbes$sales, probs=c(0.1,0.9)) # 10th and 90th quantiles
 summary(forbes$sales)
 
+# call summary on forbes$profits. What else is reported?
 
 # Data Manipulation -------------------------------------------------------
 
@@ -230,7 +232,6 @@ sum(forbes$profits < 0) # ??? Some values are missing, so R returns NA
 sum(forbes$profits < 0, na.rm=TRUE) # use na.rm=TRUE to remove missing values
 
 # summarize results
-summary(forbes.sales$sales > 100)
 table(forbes.sales$sales > 100)
 
 # can use results of logical operations to select data;
@@ -250,6 +251,8 @@ top.sales
 
 # Use the sort() function to sort vectors
 sort(forbes$assets)[1:10] # top 10 smallest assets
+sort(forbes$assets)[10:1] # top 10 smallest assets in descending order
+
 sort(forbes$profits,decreasing = TRUE)[1:10] # top 10 largest profits
 sort(table(forbes$category), decreasing = TRUE)[1:5] # top 5 industries
 
@@ -282,6 +285,7 @@ head(JapanComp)
 
 # How would you select all non-United States companies in the Utilities category?
 
+
 # deriving new variables
 # adding columns (variables)
 forbes$totalcosts <- forbes$sales - forbes$profits
@@ -289,11 +293,12 @@ head(forbes[,c("company","sales","profits","totalcosts")])
 
 # create categories (factors) from continuous variables with the cut function 
 # divide the range of sales into 4 intervals of equal length
-forbes$salesP <- cut(forbes$sales,breaks=4)
-summary(forbes$salesP)
+forbes$salesCat <- cut(forbes$sales,breaks=4)
+summary(forbes$salesCat)
+head(forbes[,c("company","sales","salesCat")])
 
 # create an indicator for US or non-US company using ifelse function
-# ifelse(condition, action if TRUE, action if FALSE)
+# syntax: ifelse(condition, action if TRUE, action if FALSE)
 forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
 table(forbes$US)
 
@@ -312,7 +317,7 @@ summary(forbes) # see the summary for "profits
 # answers T/F to question: is the value NA?
 is.na(forbes$profits)
 sum(is.na(forbes$profits)) # number missing
-which(is.na(forbes$profits))
+which(is.na(forbes$profits)) # which row numbers missing
 miss <- which(is.na(forbes$profits))
 forbes[miss,]
 
@@ -349,7 +354,7 @@ load("forbes.Rda")
 # synatx: table(row variable, column variable)
 
 # cross tab of categories vs. sales percentile categories
-table(forbes$category, forbes$salesP)
+table(forbes$category, forbes$salesCat)
 
 # cross tab of categories vs. US/Non-US countries
 table(forbes$category, forbes$US)
@@ -364,7 +369,7 @@ prop.table(CatTable, margin = 1) # rows proportions sum to 1
 prop.table(CatTable, margin = 2) # columns proportions sum to 1
 
 # for basic aggregation use aggregate
-# aggregate(numeric ~ category, data, statistic)
+# syntax: aggregate(numeric ~ category, data, statistic)
 
 # median profits by category
 aggregate(profits ~ category, data=forbes, median)
@@ -386,6 +391,8 @@ aggregate(sales ~ category + US, forbes, mean)
 
 # scatter plots
 plot(x = forbes$assets, y = forbes$marketvalue)
+with(forbes, plot(assets,marketvalue))
+
 # same with formula interface: y ~ x
 plot(marketvalue ~ assets, data=forbes)
 plot(log(marketvalue) ~ log(assets), data=forbes)
@@ -420,9 +427,12 @@ boxplot(log(marketvalue) ~ US, data=forbes, main="Market Value")
 # good for visualizing counts
 summary(forbes$category)
 dotchart(summary(forbes$category))
-dotchart(sort(summary(forbes$category))) # sorted
+# sorted with smaller labels
+dotchart(sort(summary(forbes$category)), pch=19, cex=0.7,
+         xlab="Number of Companies",
+         main="Number of Companies by Industry, Forbes 2004") 
 
-# See StatLab Past Workshops for an Intro to R Graphics:
+# See Past StatLab Workshops for an Intro to R Graphics:
 # http://data.library.virginia.edu/workshops/past-workshops/
 
 
@@ -433,7 +443,7 @@ dotchart(sort(summary(forbes$category))) # sorted
 # recall this plot; this time we make it gray
 plot(log(marketvalue) ~ log(assets), data=forbes, col="gray")
 
-# Is there a relationship between assets and market value? can we summarize it
+# Is there a relationship between assets and market value? Can we summarize it
 # with a straight line? We can use the scatter.smooth function to make scatter plot
 # and add a fitted smooth line
 scatter.smooth(x=log(forbes$assets),
@@ -474,7 +484,7 @@ table_2.5
 # Null Hypothesis: no association between gender and political party
 chisq.test(table_2.5)
 results <- chisq.test(table_2.5)
-str(results) # more than meets the eye
+str(results) # more than meets the eye! A list object.
 results$statistic
 results$p.value
 
@@ -483,13 +493,15 @@ rm(table_2.5, results)
 # hypothesis test and confidence interval
 # Probability and Statistical Inference (Hogg & Tanis, 2006), p. 492
 # problem 8.2-6
-# a coach claims FVC (forced vital capacity) of players is greater than 3.4 liters;
+# A coach claims FVC (forced vital capacity) of players is greater than 3.4 liters;
 # nine players randomly sampled
 fvc <- c(3.4, 3.6, 3.8, 3.3, 3.4, 3.5, 3.7, 3.6, 3.7)
 # Null: mean <= 3.4
 # Alternative: mean > 3.4
 t.test(fvc, mu = 3.4, alternative = "greater")
-
+tout <- t.test(fvc, mu = 3.4, alternative = "greater")
+str(tout) # a list objiect
+tout$p.value
 
 # Packages ----------------------------------------------------------------
 
@@ -525,18 +537,17 @@ search()
 M <- cor(forbes[,5:8], use="complete.obs")
 
 # now use corrplot function to visualize
-
 corrplot(M)
 corrplot(M, diag=FALSE)
-corrplot(M, type="upper", diag=FALSE)
 
+# See ?corrplot for many more examples
 
 # A few packages to know about:
 # - ggplot2 (data visualization)
-# - lme4 (multilevel modeling)
 # - reshape2 (reshape data)
 # - dplyr (data manipulation for data frames)
 # - plyr (data manipulation for all objects)
+# - lme4 (multilevel modeling)
 
 # Note: Packages often have dependencies. This means installing one package
 # will also install other packages it depends on. Example: installing
