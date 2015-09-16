@@ -1,6 +1,6 @@
 # Introduction to R workshop
 # Fall 2015
-# StatLab@UVa Library
+# UVa StatLab
 # Clay Ford
 
 # Preface comments with '#'
@@ -53,10 +53,11 @@ x + y
 x * y
 log(x*y)
 log(x) + log(y)
+1:10 + x
 
 # Your Turn: assign the value of x/y to z
 # RStudio shortcut: Alt + - inserts "<-", Try it!
-z <- x/y
+
 
 # the rm function removes objects from memory
 rm(x, y, z)
@@ -88,7 +89,7 @@ getwd()
 # "~/" is your home directory
 
 # Try setting your working directory using setwd():
-setwd("~/_workshops/IntroR/")
+
 
 # Loading/Importing Data --------------------------------------------------
 
@@ -288,8 +289,13 @@ head(JapanComp)
 
 # deriving new variables
 # adding columns (variables)
+
 forbes$totalcosts <- forbes$sales - forbes$profits
 head(forbes[,c("company","sales","profits","totalcosts")])
+
+forbes$LogSales <- log(forbes$sales)
+head(forbes[,c("sales","LogSales")])
+
 
 # create categories (factors) from continuous variables with the cut function 
 # divide the range of sales into 4 intervals of equal length
@@ -303,7 +309,7 @@ forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
 table(forbes$US)
 
 # dropping columns (variables)
-forbes$totalcosts <- NULL
+forbes$totalcosts <- forbes$LogSales <- NULL
 
 
 # Missing data ------------------------------------------------------------
@@ -330,6 +336,14 @@ which(complete.cases(forbes)==FALSE) # which records (indices)
 which(!complete.cases(forbes)) # another way using '!' (means 'not')
 miss <- which(complete.cases(forbes)==FALSE) # save indices (row numbers)
 forbes[miss,] # subset data using indices and see the companies
+
+# na.omit() - drop any records with missing data
+forbesComplete <- na.omit(forbes) 
+# would probably want to investigate before blindly dropping records
+nrow(forbes)
+nrow(forbesComplete)
+
+rm(forbesComplete)
 
 # Saving Data -------------------------------------------------------------
 
@@ -445,10 +459,11 @@ plot(log(marketvalue) ~ log(assets), data=forbes, col="gray")
 
 # Is there a relationship between assets and market value? Can we summarize it
 # with a straight line? We can use the scatter.smooth function to make scatter plot
-# and add a fitted smooth line
+# and add a fitted smooth line via loess (locally weighted scatterplot smoothing)
 scatter.smooth(x=log(forbes$assets),
                y=log(forbes$marketvalue),
                col="gray")
+
 # We can fit a linear model using the lm function (ie, regression)
 # lm(response ~ independent variables)
 lm(log(marketvalue) ~ log(assets), data=forbes) 
@@ -461,12 +476,25 @@ abline(mod, col="blue") # add the regression line to the plot
 # interpreting slope when both variables log transformed: a 1% increase in
 # assets yields about a 0.4% in marketvalue (among the Forbes 2000)
 
-# Four diagnostic plots
-plot(mod) 
+# fit a quadratic term; I() is the identity function
+mod2 <- lm(log(marketvalue) ~ log(assets) + I(log(assets)^2), data=forbes) 
+summary(mod2) 
+
+# plot fitted values
+# add fitted values to data set
+forbes$fitted <- fitted(mod2) 
+
+# sort by asset to help us plot fitted line
+forbes <- forbes[order(forbes$assets),] 
+
+# add fitted line using lines() function
+lines(log(forbes$assets), forbes$fitted, col="red")
 
 # Want to learn more? See the Linear Modeling in R workshop from October 2014:
 # http://static.lib.virginia.edu/statlab/materials/workshops/LinearModelingR.zip
-rm(mod)
+rm(mod, mod2)
+
+
 
 # chi-square test of independence
 # 1991 General Social Survey
@@ -500,7 +528,7 @@ fvc <- c(3.4, 3.6, 3.8, 3.3, 3.4, 3.5, 3.7, 3.6, 3.7)
 # Alternative: mean > 3.4
 t.test(fvc, mu = 3.4, alternative = "greater")
 tout <- t.test(fvc, mu = 3.4, alternative = "greater")
-str(tout) # a list objiect
+str(tout) # a list object
 tout$p.value
 
 # Packages ----------------------------------------------------------------
@@ -533,12 +561,12 @@ search()
 # compute a correlation matrix of numeric forbes values;
 # they are in columns 5 - 8, so use indexing notation to select;
 # need use="complete.obs" because of missing values in profit
-
 M <- cor(forbes[,5:8], use="complete.obs")
+M
 
 # now use corrplot function to visualize
 corrplot(M)
-corrplot(M, diag=FALSE)
+corrplot(M, diag=FALSE, addCoef.col="black")
 
 # See ?corrplot for many more examples
 

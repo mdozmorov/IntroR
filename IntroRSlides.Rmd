@@ -5,6 +5,10 @@ date: "Fall 2015"
 output: beamer_presentation
 ---
 
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 50)
+```
+
 ## Today's workshop
 
 Teach you how to:
@@ -78,22 +82,61 @@ Now we can use `scoreData` as an argument to other functions. For example: `summ
 
 ## R basics - objects
 
-R creates and manipulates *objects*. Examples of objects are vectors, data frames, matrices and lists. You can create as many objects as memory allows.
+In R we create and manipulate *objects*. Examples of objects are vectors, matrices, data frames and lists. You can create as many objects as memory allows.
 
-```{r}
+From the previous slide:
+
+`scoreData <- read.csv(file="scores.csv")`
+
+This creates a data frame object called `scoreData`.
+
+## R basics - vectors
+
+One-dimensional objects consisting of the same things (numbers or characters).
+
+```{r, collapse=TRUE}
 # create vector of character strings
 gender <- c("Male","Female","Male") 
+gender
 
 # create vector of numbers
-x <- seq(0, 10, by=2) 
-
-# create data frame
-forbes <- read.csv("Forbes2000.csv")  
-
-# perform a t-test and save results in a list
-tout <- t.test(extra ~ group, data = sleep)
+x <- seq(0, 40, by=2) 
+x
 ```
 
+## R basics - matrices
+
+Two-dimensional objects consisting of the same things (numbers or characters).
+
+```{r}
+M <- matrix(1:4,ncol=2)
+M
+```
+
+Arrays are another type of object. Like matrix, but multi-dimensional.
+
+## R basics - data frames
+
+Two-dimensional objects consisting of the different things (numbers or characters), but the same number of things.
+
+```{r}
+df <- read.csv("C:/data/grades.csv")
+df
+```
+
+
+## R basics - lists
+
+An object consisting of different things (numbers or characters), and with different numbers of those things.
+
+```{r}
+x <- 1:10
+y <- list(Mean = mean(x),Range = range(x),
+          Comment = "This is x.")
+y
+```
+
+Statistical output is often contained in lists. 
 
 ## R basics - packages
 
