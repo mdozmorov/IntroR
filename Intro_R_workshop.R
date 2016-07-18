@@ -471,6 +471,18 @@ t.test(fvc, mu = 3.4, alternative = "greater")
 tout <- t.test(fvc, mu = 3.4, alternative = "greater")
 str(tout) # a list object
 tout$p.value
+rm(fvc, tout)
+
+
+# Two-sample t-test
+# Are means sales different between US and non-US companies?
+aggregate(sales ~ US, data = forbes, mean)
+t.test(sales ~ US, data = forbes)
+t.test(log(sales) ~ US, data = forbes)
+boxplot(sales ~ US, data = forbes)
+boxplot(log(sales) ~ US, data = forbes)
+
+
 
 # Packages ----------------------------------------------------------------
 
@@ -517,7 +529,6 @@ corrplot(M, diag=FALSE, addCoef.col="black")
 # - ggplot2 (data visualization)
 # - reshape2 (reshape data)
 # - dplyr (data manipulation for data frames)
-# - plyr (data manipulation for all objects)
 # - lme4 (multilevel modeling)
 
 # Note: Packages often have dependencies. This means installing one package

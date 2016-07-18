@@ -1,7 +1,7 @@
 ---
 title: "Introduction to R"
 author: "Clay Ford"
-date: "Fall 2015"
+date: "Fall 2016"
 output: beamer_presentation
 ---
 
@@ -17,7 +17,8 @@ Teach you how to:
 - do some basic statistics
 - do some graphing
 
-I'm assuming you're new to R.
+I'm assuming you're new to R.  
+\ 
 
 The goal: get you comfortable enough to help yourself go further with R.
 
@@ -32,11 +33,14 @@ The goal: get you comfortable enough to help yourself go further with R.
 
 ## How to get R and RStudio
 
-**R**: http://cran.r-project.org/ (or better yet, Google “Download R”)
+**R**: http://cran.r-project.org/ (or better yet, Google “Download R”)  
+\ 
 
-**RStudio**: http://www.rstudio.com/ 
+**RStudio**: http://www.rstudio.com/   
+\ 
 
-Both are available for Windows, Mac, and Linux and free to install (no catches).
+Both are available for Windows, Mac, and Linux and free to install (no catches).  
+\ 
 
 **If you install R and RStudio, then you only need to run RStudio.**
 
@@ -44,13 +48,17 @@ Both are available for Windows, Mac, and Linux and free to install (no catches).
 
 ## R basics - functions
 
-R uses *functions* to perform operations.
+R uses *functions* to perform operations.  
+\ 
 
-Functions take *arguments* to specify how operations are performed.
+Functions take *arguments* to specify how operations are performed.   
+\ 
 
-Example: `read.csv(file="scores.csv")`
+Example: `read.csv(file="scores.csv")`   
+\ 
 
-`read.csv` is a function to import a CSV file; `file` is an argument.
+`read.csv` is a function to import a CSV file; `file` is an argument.   
+\ 
 
 R has **many** functions. Fortunately about 20% of them do about 80% of the work.
 
@@ -62,7 +70,8 @@ You can run functions two ways:
 1. In the console at the command line; type the function and hit Enter
 2. In an R script; type the function and (with cursor on same line as code) hit Ctrl + Enter (Command + Enter on Mac)
 
-An R script is a text file that contains all your R code. R scripts allow you to save, edit, reproduce and share your code.
+An R script is a text file that contains all your R code. R scripts allow you to save, edit, reproduce and share your code.   
+\ 
 
 Today's workshop will be centered around an R script I wrote in advance.
 
@@ -70,27 +79,34 @@ Today's workshop will be centered around an R script I wrote in advance.
 
 ## R basics - assignment
 
-We often need to save a function's result or output. For this we use the assignment operator: ` <- `
+We often need to save a function's result or output. For this we use the assignment operator: ` <- `  
+\ 
 
-For example, when you import a CSV file you need to give it a name:
+For example, when you import a CSV file you need to give it a name:  
+\ 
 
-`scoreData <- read.csv(file="scores.csv")`
+`scoreData <- read.csv(file="scores.csv")`   
+\ 
 
-Now we can use `scoreData` as an argument to other functions. For example: `summary(scoreData)` which computes summaries for each column in the data.
+Now we can use `scoreData` as an argument to other functions. For example: `summary(scoreData)` which computes summaries for each column in the data.   
+\ 
 
-**Note**: Use `Alt + -` in RStudio to quickly insert ` <- `. You can also use `=` for assignment.
+**Note**: Use `Alt + -` (Win) or `Option + -` (Mac) in RStudio to quickly insert ` <- `. You can also use `=` for assignment.
 
 ## R basics - objects
 
-In R we create and manipulate *objects*. Examples of objects are vectors, matrices, data frames and lists. You can create as many objects as memory allows.
+In R we create and manipulate *objects*. Examples of objects are vectors, matrices, data frames and lists. You can create as many objects as memory allows.   
+\ 
 
-From the previous slide:
+From the previous slide:   
+\ 
 
-`scoreData <- read.csv(file="scores.csv")`
+`scoreData <- read.csv(file="scores.csv")`   
+\ 
 
 This creates a data frame object called `scoreData`.
 
-## R basics - vectors
+## R objects - vectors
 
 One-dimensional objects consisting of the same things (numbers or characters).
 
@@ -104,7 +120,7 @@ x <- seq(0, 40, by=2)
 x
 ```
 
-## R basics - matrices
+## R objects - matrices
 
 Two-dimensional objects consisting of the same things (numbers or characters).
 
@@ -115,9 +131,9 @@ M
 
 Arrays are another type of object. Like matrix, but multi-dimensional.
 
-## R basics - data frames
+## R objects - data frames
 
-Two-dimensional objects consisting of the different things (numbers or characters), but the same number of things.
+Two-dimensional objects consisting of different things (numbers or characters), but the same number of things.
 
 ```{r}
 df <- read.csv("C:/data/grades.csv")
@@ -125,13 +141,13 @@ df
 ```
 
 
-## R basics - lists
+## R objects - lists
 
 An object consisting of different things (numbers or characters), and with different numbers of those things.
 
 ```{r}
-x <- 1:10
-y <- list(Mean = mean(x),Range = range(x),
+x <- 1:100
+y <- list(Length = length(x), Summary = summary(x),
           Comment = "This is x.")
 y
 ```
@@ -140,11 +156,14 @@ Statistical output is often contained in lists.
 
 ## R basics - packages
 
-All functions belong to *packages*. R comes with about 30 packages, but as of August 2015, there are *over 7000* user-contributed packages!
+All functions belong to *packages*. R comes with about 30 packages, but as of August 2016, there are *over 8700* user-contributed packages!   
+\ 
 
-To use functions in a package, the package must be installed and loaded. 
+To use functions in a package, the package must be installed and loaded.    
+\ 
 
-You only install a package once. You load a package whenever you want to use its functions.
+You only _install_ a package once. You _load_ a package whenever you want to use its functions. You also sometimes need to _update_ packages when new versions are released.      
+\ 
 
 Examples of packages that come with R:
 
@@ -155,7 +174,8 @@ Examples of packages that come with R:
 
 ## R in a Nutshell
 
-**Use functions in various packages to create and manipulate objects**.
+**Use functions in various packages to create and manipulate objects**.  
+\ 
 
 So we need to learn...
 
@@ -167,25 +187,6 @@ So we need to learn...
 
 Let's open up RStudio and get started!
 
-## A selection of R Commands
-
-![functions](functions.jpg)
-
-Download the R Reference Card: 
-
-https://cran.r-project.org/doc/contrib/Short-refcard.pdf
-
-## Helpful RStudio keyboard shortcuts
-
-- `Ctrl + Enter` to submit code
-- `Tab` key to let RStudio finish typing commands for you
-- `Shift + down arrow` to highlight lines or blocks of code
-- `Ctrl + 1` and `Ctrl + 2` to switch between script and console
-- up and down arrows cycle through previous commands in console
-- `Ctrl + Shift + C` to comment/uncomment a block of lines
-- `Ctrl + L` to clear the console
-
-More: Help - Keyboard Shortcuts
 
 ## Keep Going!
 
@@ -217,11 +218,14 @@ More: Help - Keyboard Shortcuts
 
 ## StatLab
 
-Thanks for coming today!
+Thanks for coming today!  
+\ 
 
-For help and advice with your data analysis, contact the StatLab to set up an appointment: statlab@virginia.edu
+For help and advice with your data analysis, contact the StatLab to set up an appointment: statlab@virginia.edu  
+\ 
 
 Sign up for more workshops or see past workshops:
-http://data.library.virginia.edu/statlab/
+http://data.library.virginia.edu/training/   
+\ 
 
 Register for the Research Data Services newsletter to stay up-to-date on StatLab events and resources: http://data.library.virginia.edu/newsletters/
