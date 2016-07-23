@@ -497,13 +497,11 @@ rm(mod, mod2)
 
 
 # chi-square test of independence
-# 1991 General Social Survey
-# An Introduction to Categorical Data Analysis (Agresti, 1996), p. 31
-# Table 2.5
-
+# 2000 General Social Survey
+# Agresti, A. (2007). An introduction to categorical data analysis (Hoboken, NJ: Wiley-Interscience). p. 37, section 2.4.4, Table 2.5
 # manually enter data from Table 2.5 into a matrix
 # The matrix function fills by column
-table_2.5 <- matrix(c(279,165,73,47,225,191),ncol=3)
+table_2.5 <- matrix(c(762, 327, 468, 484, 239, 477), ncol=3)
 table_2.5
 colnames(table_2.5) <- c("Dem","Ind","Rep")
 rownames(table_2.5) <- c("Females","Males")
