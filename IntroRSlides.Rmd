@@ -33,7 +33,7 @@ The goal: get you comfortable enough to help yourself go further with R.
 
 ## How to get R and RStudio
 
-**R**: http://cran.r-project.org/ (or better yet, Google “Download R”)  
+**R**: http://cran.r-project.org/ (or better yet, Google "Download R")  
 \ 
 
 **RStudio**: http://www.rstudio.com/   
@@ -42,33 +42,29 @@ The goal: get you comfortable enough to help yourself go further with R.
 Both are available for Windows, Mac, and Linux and free to install (no catches).  
 \ 
 
-**If you install R and RStudio, then you only need to run RStudio.**
+**After you install R and RStudio, you only need to run RStudio.**
 
 
 
 ## R basics - functions
 
-R uses *functions* to perform operations.  
-\ 
+* R uses *functions* to perform operations.
 
-Functions take *arguments* to specify how operations are performed.   
-\ 
+* Functions take *arguments* to specify how operations are performed. Example:
 
-Example: `read.csv(file="scores.csv")`   
-\ 
+`read.csv(file="scores.csv")` 
 
-`read.csv` is a function to import a CSV file; `file` is an argument.   
-\ 
+* `read.csv` is a function to import a CSV file; `file` is an argument.
 
-R has **many** functions. Fortunately about 20% of them do about 80% of the work.
+* R has **many** functions. Fortunately about 20% of them do about 80% of the work.
 
 
 ## R basics - running functions
 
-You can run functions two ways:
+Two common ways to run functions:
 
 1. In the console at the command line; type the function and hit Enter
-2. In an R script; type the function and (with cursor on same line as code) hit Ctrl + Enter (Command + Enter on Mac)
+2. In an R script; type the function and (with cursor on same line as code) hit Ctrl + Enter (Win) or Command + Enter (Mac)
 
 An R script is a text file that contains all your R code. R scripts allow you to save, edit, reproduce and share your code.   
 \ 
@@ -79,98 +75,38 @@ Today's workshop will be centered around an R script I wrote in advance.
 
 ## R basics - assignment
 
-We often need to save a function's result or output. For this we use the assignment operator: ` <- `  
-\ 
+* We often need to save a function's result or output. For this we use the assignment operator: ` <- `  
 
-For example, when you import a CSV file you need to give it a name:  
-\ 
+* For example, when you import a CSV file you need to give it a name: 
 
 `scoreData <- read.csv(file="scores.csv")`   
-\ 
+ 
+* Now we can use `scoreData` as an argument to other functions. For example, computes summaries for each column in the data:
 
-Now we can use `scoreData` as an argument to other functions. For example: `summary(scoreData)` which computes summaries for each column in the data.   
-\ 
+`summary(scoreData)` 
 
-**Note**: Use `Alt + -` (Win) or `Option + -` (Mac) in RStudio to quickly insert ` <- `. You can also use `=` for assignment.
+* **Note**: Use `Alt + -` (Win) or `Option + -` (Mac) in RStudio to quickly insert ` <- `. You can also use `=` for assignment.
 
 ## R basics - objects
 
-In R we create and manipulate *objects*. Examples of objects are vectors, matrices, data frames and lists. You can create as many objects as memory allows.   
-\ 
+- In R we create and manipulate *objects*. Examples of objects are vectors, matrices, data frames and lists. You can create as many objects as memory allows. 
 
-From the previous slide:   
-\ 
+- On the previous slide we created a data frame object called `scoreData`:
 
-`scoreData <- read.csv(file="scores.csv")`   
-\ 
-
-This creates a data frame object called `scoreData`.
-
-## R objects - vectors
-
-One-dimensional objects consisting of the same things (numbers or characters).
-
-```{r, collapse=TRUE}
-# create vector of character strings
-gender <- c("Male","Female","Male") 
-gender
-
-# create vector of numbers
-x <- seq(0, 40, by=2) 
-x
+```
+scoreData <- read.csv(file="scores.csv")
 ```
 
-## R objects - matrices
-
-Two-dimensional objects consisting of the same things (numbers or characters).
-
-```{r}
-M <- matrix(1:4,ncol=2)
-M
-```
-
-Arrays are another type of object. Like matrix, but multi-dimensional.
-
-## R objects - data frames
-
-Two-dimensional objects consisting of different things (numbers or characters), but the same number of things.
-
-```{r}
-df <- read.csv("C:/data/grades.csv")
-df
-```
-
-
-## R objects - lists
-
-An object consisting of different things (numbers or characters), and with different numbers of those things.
-
-```{r}
-x <- 1:100
-y <- list(Length = length(x), Summary = summary(x),
-          Comment = "This is x.")
-y
-```
-
-Statistical output is often contained in lists. 
 
 ## R basics - packages
 
-All functions belong to *packages*. R comes with about 30 packages, but as of August 2016, there are *over 8700* user-contributed packages!   
-\ 
+- All functions belong to *packages*. R comes with about 30 packages, but as of August 2016, there are *over 8700* user-contributed packages! 
 
-To use functions in a package, the package must be installed and loaded.    
-\ 
+- To use functions in a package, the package must be installed and loaded.
 
-You only _install_ a package once. You _load_ a package whenever you want to use its functions. You also sometimes need to _update_ packages when new versions are released.      
-\ 
+- You only _install_ a package once. 
 
-Examples of packages that come with R:
-
-- The `stats` package contains statistical functions
-- The `foreign` package contains functions for reading data from other statistical programs
-- The `graphics` package contains functions for creating graphics
-
+- You _load_ a package whenever you want to use its functions. 
 
 ## R in a Nutshell
 
@@ -198,8 +134,7 @@ Let's open up RStudio and get started!
 
 - Teetor, P., *R Cookbook*, O'Reilly, 2011.
 
-- Coursera's *Computing for Data Analysis*: https://www.coursera.org/course/compdata
-
+- Hothorn, T. & Everitt, B., *A Handbook of Statistical Analyses Using R*, CRC Press, 2009.
 
 ## Check out these web sites
 
@@ -221,11 +156,11 @@ Let's open up RStudio and get started!
 Thanks for coming today!  
 \ 
 
-For help and advice with your data analysis, contact the StatLab to set up an appointment: statlab@virginia.edu  
+For help and advice with your data analysis, contact us: statlab@virginia.edu  
 \ 
 
 Sign up for more workshops or see past workshops:
 http://data.library.virginia.edu/training/   
 \ 
 
-Register for the Research Data Services newsletter to stay up-to-date on StatLab events and resources: http://data.library.virginia.edu/newsletters/
+Register for the Research Data Services newsletter to be notified of future workshops: http://data.library.virginia.edu/newsletters/

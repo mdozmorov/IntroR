@@ -1,5 +1,5 @@
 # Introduction to R workshop
-# Fall 2015
+# Fall 2016
 # UVa StatLab
 # Clay Ford
 
@@ -57,6 +57,7 @@ log(x) + log(y)
 
 # Your Turn: assign the value of x/y to z
 # RStudio shortcut: Alt + - inserts "<-", Try it!
+z <- x/y
 
 
 # the rm function removes objects from memory
@@ -89,7 +90,7 @@ getwd()
 # "~/" is your home directory
 
 # Try setting your working directory using setwd():
-
+setwd("~/_workshops/IntroR/")
 
 # Loading/Importing Data --------------------------------------------------
 
@@ -176,7 +177,7 @@ forbes$name
 forbes$name[1:10] # first 10
 
 # On the next line type forbes$. What happens?
-
+forbes$name
 
 # recall forbes$category was a factor (ie, categorical variable)
 # to see the levels, use the levels function
@@ -284,7 +285,9 @@ subset(forbes, country == "Japan" & sales > 50, c(company, sales))
 JapanComp <- subset(forbes, country == "Japan", -country)
 head(JapanComp)
 
-# How would you select all non-United States companies in the Utilities category?
+# How would you select all non-United States companies 
+# in the Utilities category?
+head(subset(forbes, country != "United States" & category == "Utilities"))
 
 
 # deriving new variables
@@ -307,6 +310,8 @@ head(forbes[,c("company","sales","salesCat")])
 # syntax: ifelse(condition, action if TRUE, action if FALSE)
 forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
 table(forbes$US)
+
+forbes$test <- NULL
 
 # dropping columns (variables)
 forbes$totalcosts <- forbes$LogSales <- NULL
@@ -563,6 +568,8 @@ search()
 # need use="complete.obs" because of missing values in profit
 M <- cor(forbes[,5:8], use="complete.obs")
 M
+
+
 
 # now use corrplot function to visualize
 corrplot(M)
