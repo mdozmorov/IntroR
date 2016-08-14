@@ -3,102 +3,83 @@
 # UVa StatLab
 # Clay Ford
 
-# Preface comments with '#'
-
-# RStudio layout ---------------------------------------------------------
-
-# The DEFAULT layout
-# top left: R script (text file with R code) 
-# top right: objects in memory 
-# bottom left: console (output and interactive work) 
-# bottom right: plots, packages and help
 
 
-# R can be a calculator ---------------------------------------------------
+# Welcome to R! -----------------------------------------------------------
 
-# move your cursor to the next line and hit Ctrl + Enter (or Command + Enter on
-# Mac)
-2 + 2
-22/7
-2 + 7 * 7 - (3^2)
-5 %% 2 # modulo (ie, remainder of division)
-5 %/% 2 # integer division
+# This R script is intended to get you started doing data analysis with R.
 
-# Try some math in the console.
+# R comes with built-in data sets that we can use for learning purposes. The 
+# "hello world" data set of R is the "iris" data set. Put your cursor on the 
+# line below that says data(iris) and hit Ctrl + Enter (Windows/Linux) or Command +
+# Enter (Mac). This loads the built-in iris data set.
 
-# TIP: use Ctrl + 1 and Ctrl + 2 to switch between script and console.
+data(iris)
 
-# Typing and submitting functions -----------------------------------------
+# The str() function will tell us about the structure of the data
+str(iris)
 
-# Example: the log function (default is natural log)
-log(27)
-# functions have arguments (here, 'x=' and 'base=', separaed by a comma)
-log(x = 1000, base=10)
-# we can leave off the names if we put arguments in the right order
-log(1000, 10)
-# and we can do math with it:
-log(27) + 4
+# Notice the output in the console says iris is a "data.frame". Most data you'll
+# work with R will be a data.frame.
 
-# on the blank line below, or in the console, type "log" and see what Rstudio
-# does for you:
+# Click on "iris" in the Environment window to browse the data. 
 
+# Calling summary() on a data frame summarizes the columns of the data frame:
+summary(iris)
 
-# functions that begin with "log" appear along with help.
-# The word next to the function in curly braces is the package it's in.
+# Calling pairs() on a data frame produces pair-wise scatter plots:
+pairs(iris)
 
+# Obviously this only works well for data.frames with a few columns.
 
-# assign results of calculation to x using the assignment operator: <-
+# other handy functions for investigating data.frames
+head(iris)
+head(iris, n=3)
 
-x <- log(27) + 4 
-y <- log(1000, base=10) 
+tail(iris)
+tail(iris, n=1)
 
-# view x and y
-x
-y 
-
-# use x and y
-x + y
-x * y
-log(x*y)
-log(x) + log(y)
-log(1:10) # works on a vector! Most R functions work on vectors.
-
-# Your Turn: assign the value of x/y to z
-# RStudio shortcut: Alt + - (Win) or Option + - (Mac) inserts "<-", Try it!
-z <- x/y
-
-# the rm function removes objects from memory
-rm(x, y, z)
+names(iris)
+nrow(iris)
+ncol(iris)
+dim(iris)
 
 
-# get help on a function with the help function;
-# typically do this in the console
-help(log)
-# or
-?log
-# or use the search field in the RStudio help section
+# Loading our own data ----------------------------------------------------
 
+# The iris data is nice for playing with R, but eventually we need to load our 
+# own data. Also it's worth noting that R really isn't for data entry. You can 
+# do it, but it's easier to use something like Excel for data collection and
+# data entry. R is for cleaning and analyzing data you have already collected.
 
-# The working directory ---------------------------------------------------
+# You can import just about any kind of data into R: Excel, Stata, SPSS, SAS, 
+# CSV, JSON, fixed-width, TXT, DAT, shape files, and on and on. You can even 
+# connect to data bases. The best way to figure out how: Google "how to import 
+# <type> files into R." This will usually involve installing and loading a
+# special R package, which we'll talk about later.
 
-# Your working directory is where R will save output or look for input unless 
-# told otherwise. The working directort is displayed in the header of the
-# console.
+# Today we'll import a CSV file.
 
-# See your working directory with getwd function.
-# notice the parentheses! 
-getwd() 
+# Before we do that let's set our working directory. Your working directory is
+# where R looks for files if you don't provide a path to the file. The working
+# directory is displayed in the header of the console. You typically set your
+# working directory to where your research or project files are located.
 
-# What happens without parentheses?
-
-# Set working directory in RStudio: Session...Set Working Directory.
-# Or use setwd() function; path must be in quotes;
-# I recommend the latter.
-# hit Tab and R will show you what directories are available. 
+# Good to know:
 # "/" is your root directory
 # "~/" is your home directory
 
-# Try setting your working directory using setwd():
+# To set working directory via point-and-click:
+# Session...Set Working Directory...Choose Directory
+
+# To set working directory with R code:
+# use setwd() function; path must be in quotes
+
+# TRY NOW! 
+# Type "setwd" and open parens. Then in the parens type a double-quote. Then hit
+# Tab. A list of directories should pop up. Keep selecting directories and
+# hitting TAB until you arrive at the directory where you downloaded the 
+# workshop files.
 
 
 # Loading/Importing Data --------------------------------------------------
@@ -109,64 +90,78 @@ getwd()
     
 # Import a CSV file and create a "dataframe"; here are three ways to do it:
 
-# (1) read file from working directory on computer
+# (1) read file from working directory on computer. If we've already set our 
+# working directory to the location where the CSV file is located, we just need
+# to put the name of the file in quotes.
 forbes <- read.csv("Forbes2000.csv")
 
-# (2) read from web site 
+# (2) read from a web site. If the file is on the web, simply copy-and-paste the
+# URL and enclose in quotes:
 forbes <- read.csv("http://people.virginia.edu/~jcf2d/workshops/R/Forbes2000.csv")
 
-# (3) use the RStudio "Import Dataset" button in the Environment window
+# (3) use the RStudio "Import Dataset" button in the Environment window. Click
+# on "Import Dataset", select "From Local File...", and navigate to file.
 
 # another common function: read.table()
 # (read.csv is actually read.table with different defaults.)
 
-# R can import ASCII files, fixed-width format, Stata, SPSS, Minitab, XML, XLS, 
-# JSON, etc. It can also read relational databases. Probably best to just Google
-# how to import whatever format you're dealing with.
 
 # Inspecting Data ---------------------------------------------------------
 
-# Quick way: click the name in the Environment window
-
-# Another way: enter the name in the console and hit Enter.
-# Try it and see what happens.
-
-# Good time to remind you of this keyboard shortcut:
-# Ctrl + L/Command + L to clear console
-
-
-# view structure of data; very useful function!
+# view structure of data
 str(forbes)
 
-# int = integer
-# num = number
-# Factor = categorical variable
+# Can also click the name in the Environment window
 
-head(forbes) # first 6 records
-tail(forbes) # last 6 records
-summary(forbes) # summary of variables
-dim(forbes) # dimensions of data frame
+# We can also just enter forbes in the console and hit Enter. That's not very
+# useful. Try it and see what happens.
 
-# You can probably tell what these functions do:
+# It blew away our console! And it didn't even display all the data. R has a
+# default limit for printing information to the console. 
+
+# Good time to tell you about this keyboard shortcut:
+# Ctrl + L (Win) or Command + L (Mac) to clear console
+
+
+head(forbes)
+tail(forbes)
+dim(forbes) 
+
 names(forbes)
-nrow(forbes)
-ncol(forbes)
+summary(forbes) 
+
+# country and category are stored as factors, or categorical variables. We can
+# see all the different categories with the levels function:
+levels(forbes$category)
+
+# Notice the construction "forbes$category". That allows us to extract just the
+# category column.
 
 
-# Working with columns/rows of data ---------------------------------------
+# Indexing brackets -------------------------------------------------------
 
-# Use indexing brackets to select portions of data frame
+# R keeps data out of sight. If we want to see or use our data, we have to tell 
+# it what parts we want to see or use. While this can seem counterintuitive at 
+# first, it allows us focus on the data we're interested in and cut down on
+# distractions.
+
+# We can use indexing brackets to select portions of data frame:
 # [row number(s),column number(s)/name(s)]
 
 # show first 6 records of first 2 columns
 # 1:6 = 1,2,3,4,5,6
 forbes[1:6,1:2] 
+
 # first six rows
 forbes[1:6,] 
+
 # columns 2 and 3
 forbes[,2:3] 
+
 # rows 10 and 11, columns 2, 4, and 6
 forbes[c(10,11),c(2,4,6)]
+
+# Note: c(10,11) and c(2,4,6) are "vectors"; The c() function means "combine"
 
 # can also use column names
 forbes[1:6,c("name","category")]
@@ -174,11 +169,8 @@ forbes[1:6,c("name","category")]
 # first 5 records and all but first column (rank)
 forbes[1:5,-1]
 
-# first 5 records and all but last two columns (assets and marketvalue)
-forbes[1:5,-c(7,8)]
-
-# last row without typing the row number:
-forbes[nrow(forbes),]
+# first record and all but last two columns (assets and marketvalue)
+forbes[1,-c(7,8)]
 
 # We can access columns of a data frame using $ as follows
 forbes$name
@@ -187,13 +179,52 @@ forbes$name[1:10] # first 10
 # On the next line type forbes$. What happens?
 
 
-# recall forbes$category was a factor (ie, categorical variable)
-# to see the levels, use the levels function
-levels(forbes$category)
 
-# to calculate frequencies of a factor
+# Subsetting data ---------------------------------------------------------
+
+# We often want to see parts of our data that meet a certain condition. Which 
+# companies had sales over 100 billion? Which companies from Canada are in the
+# list? Which Banking companies from the United States are in the list?
+
+# We can define conditions in our indexing brackets.
+
+# Show rows with sales greater than 100 billion
+forbes[forbes$sales > 100,]
+
+# Show rows where country is equal to Canada
+forbes[forbes$country=="Canada",]
+
+# Show rows where country equals United States and industry equals Banking.
+forbes[forbes$country=="United States" & forbes$category=="Banking",]
+
+# We can save these subsets of data for future analysis:
+us.banking <- forbes[forbes$country=="United States" & forbes$category=="Banking",]
+
+
+# We can also subset our data using the subset() function. The syntax is 
+# subset(data, condition)
+subset(forbes, sales > 100)
+subset(forbes, country == "Canada")
+subset(forbes, country == "United States" & category == "Banking")
+
+# We can also select certain columns. For example:
+subset(forbes, sales > 100 & country != "United States", c("name","category"))
+
+# YOUR TURN! Select all non-United States companies in the Utilities category.
+
+
+# Basic summary stats -----------------------------------------------------
+
+# The summary function is nice for quickly generating summaries of all columns,
+# but we often want to generate specific summaries.
+
+# to calculate frequencies of a factor, or categorical variable
 table(forbes$category)
 summary(forbes$category)
+
+# sort category count in increasing or decreasing order
+sort(table(forbes$category))
+sort(table(forbes$category), decreasing = TRUE)
 
 # summarize numeric columns
 mean(forbes$sales)
@@ -203,6 +234,10 @@ mean(forbes$profits) # NA?
 # any missing data. Usa na.rm=TRUE to override:
 mean(forbes$profits, na.rm = TRUE)
 
+# How many missing?
+summary(forbes$profits)
+
+# A few other summary functions
 median(forbes$sales)
 sd(forbes$sales) # standard deviation
 range(forbes$sales) # returns min and max values
@@ -210,10 +245,36 @@ quantile(forbes$sales)
 quantile(forbes$sales, probs=c(0.1,0.9)) # 10th and 90th quantiles
 summary(forbes$sales)
 
-# call summary on forbes$profits. What else is reported?
+# Counting number of conditions satisfied. For example, how many companies had
+# sales over 5 billion?
+
+# The following generates a vector of TRUE/FALSE values (and some NA where
+# profit is missing)
+forbes$sales > 5
+
+# In R, TRUE = 1 and FALSE = 0, so we can do math with TRUE/FALSE values. How
+# many TRUES?
+sum(forbes$sales > 5)
+
+# Percent of Forbes 2000 with sales over 5 billion:
+mean(forbes$sales > 5)
+
+# How many companies had negative profits?
+sum(forbes$profits < 0)
+
+# We have NA in the profits column, so we need to tell R to ignore them:
+sum(forbes$profits < 0, na.rm = TRUE)
+mean(forbes$profits < 0, na.rm = TRUE)
+
+# We can also count up TRUE and FALSE with table
+table(forbes$sales > 5)
+table(forbes$profits < 0)
+
+# YOUR TURN! What percent of the Forbes 2000 list is from the United States?
 
 
-# Data Manipulation -------------------------------------------------------
+
+# Some basic data manipulation --------------------------------------------
 
 # Here's how to change column names:
 names(forbes) # view column names
@@ -221,96 +282,30 @@ names(forbes)[2] # view 2nd column name
 names(forbes)[2] <- "company"  # assign "company" as 2nd column name
 names(forbes)
 
-# extract two columns and make a new data frame called forbes.sales;
-# nothing before comma means select all rows
-forbes.sales <- forbes[,c("company","sales")]
-head(forbes.sales)
 
-# using logical (true/false) operators to select data
-# == EQUAL
-# != NOT EQUAL
-
-# R evalutes the following and returns TRUE or FALSE
-forbes.sales$sales >= 50
-forbes$country == "Japan"
-forbes$country != "Japan"
-forbes$profits < 0
-
-# the above results have limited use unless we combine them with functions.
-# In R TRUE = 1, FALSE = 0
-sum(forbes$sales > 100)
-sum(forbes$country == "Japan")
-mean(forbes$country == "United States") # proportion of forbes list that are in US
-sum(forbes$profits < 0) # ??? Some values are missing, so R returns NA
-sum(forbes$profits < 0, na.rm=TRUE) # use na.rm=TRUE to remove missing values
-
-# summarize results
-table(forbes.sales$sales > 100)
-
-# can use results of logical operations to select data;
-# TRUE shows row; FALSE does not show row;
-# In words: "extract rows of forbes.sales such that sales > 100"
-forbes.sales[forbes.sales$sales > 100,] 
-
-# create new data frame for companies with sales > $100B
-top.sales <- forbes.sales[forbes.sales$sales > 100,] 
-top.sales
-
-# new data frame still has row numbers from previous data frame
-rownames(top.sales) <- NULL # reset row numbers (or row "names")
-top.sales
-
-
-# subsetting data using subset function
-# syntax: subset(data, selection conditions, which columns to keep)
-
-# see the Japanese companies
-subset(forbes, country == "Japan", company)
-
-# see the Japanese companies with sales > 50 billion
-subset(forbes, country == "Japan" & sales > 50, c(company, sales))
-
-# create data frame of just Japanese companies and drop country column
-JapanComp <- subset(forbes, country == "Japan", -country)
-head(JapanComp)
-
-# How would you select all non-United States companies 
-# in the Utilities category?
-
-
-# deriving new variables
-# adding columns (variables)
-
+# We can derive new columns. Here we subtract profits from sales to create a new
+# column caled totalcosts:
 forbes$totalcosts <- forbes$sales - forbes$profits
-head(forbes[,c("company","sales","profits","totalcosts")])
 
-forbes$LogSales <- log(forbes$sales)
-head(forbes[,c("sales","LogSales")])
-
+# Add a new column for log-transformed sales
+forbes$logsales <- log(forbes$sales)
 
 # create an indicator for US or non-US company using ifelse function
 # syntax: ifelse(condition, action if TRUE, action if FALSE)
 forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
 table(forbes$US)
 
+# Could also just do this; generates TRUE/FALSE:
+# forbes$US <- ifelse(forbes$country=="United States")
+
+
 # dropping columns (variables)
 forbes$totalcosts <- NULL
-forbes$LogSales <- NULL
+forbes$logsales <- NULL
 
-
-# Saving Data -------------------------------------------------------------
-
-# R objects can be saved; use an .Rda or .Rdata extension
-
-# save multiple objects for later use
-save(forbes, forbes.sales, top.sales, file="forbes.Rda")
-rm(forbes, forbes.sales, top.sales)
-load("forbes.Rda")
-
-# I typically write an R script for data preparation and manipulation that ends 
-# with saving the analysis-ready data as a .Rda file. Then I write another 
-# analysis script that begins with loading the .Rda file. This way I don't have
-# to re-run my data prep code everytime I come back to work on my analysis.
+# YOUR TURN! Add a column called salesM that is for sales in millions instead of
+# billions. (ie, multiply by 1000)
+forbes$salesM <- forbes$sales*1000
 
 
 # Aggregating and Summarizing Data ----------------------------------------
@@ -350,6 +345,9 @@ aggregate(profits ~ country, forbes, sum, subset= profits > 0)
 # mean sales by category and US/Not US
 aggregate(sales ~ category + US, forbes, mean)
 
+# YOUR TURN! What is the mean marketvalue by category for companies not in the
+# US?
+
 
 # Simple Graphics ---------------------------------------------------------
 
@@ -359,7 +357,11 @@ with(forbes, plot(assets,marketvalue))
 
 # same with formula interface: y ~ x
 plot(marketvalue ~ assets, data=forbes)
+
+# plot log transformed data
 plot(log(marketvalue) ~ log(assets), data=forbes)
+
+# Customize the labels
 plot(log(marketvalue) ~ log(assets), data=forbes, 
      main="Market Value vs. Assets",
      ylab = "Log Market Value",
@@ -369,6 +371,7 @@ plot(log(marketvalue) ~ log(assets), data=forbes,
 # Use the Export button to save image as JPG, TIF, PDF, etc.
 
 # histograms
+# Histogram of market value
 hist(forbes$marketvalue) # skew
 hist(log(forbes$marketvalue)) # more symmetric
 hist(log(forbes$marketvalue),prob=TRUE) # show probability densities
@@ -400,11 +403,7 @@ boxplot(log(marketvalue) ~ US, data=forbes, main="Market Value")
 plot(log(marketvalue) ~ log(assets), data=forbes)
 
 # Is there a relationship between assets and market value? Can we summarize it
-# with a straight line? We can use the scatter.smooth function to make scatter plot
-# and add a fitted smooth line via loess (locally weighted scatterplot smoothing)
-scatter.smooth(x=log(forbes$assets),
-               y=log(forbes$marketvalue),
-               col="gray")
+# with a straight line? 
 
 # We can fit a linear model using the lm function (ie, regression)
 # lm(response ~ independent variables)
@@ -412,16 +411,21 @@ lm(log(marketvalue) ~ log(assets), data=forbes)
 
 # save the model (ie, create a model object) and view a summary:
 mod <- lm(log(marketvalue) ~ log(assets), data=forbes) 
-# Notice mod is a list
+# summary of the model
 summary(mod) 
-confint(mod) # 95% confidence interval for model coefficients
-
-# add fitted line using lines() function; just like plotting x-y values in
-# algebra class.
-lines(x = sort(log(forbes$assets)), y = sort(fitted(mod)), col = "blue")
 
 # interpreting slope when both variables log transformed: a 1% increase in
 # assets yields about a 0.4% in marketvalue (among the Forbes 2000)
+
+# add fitted line using abline()
+abline(mod, col="blue")
+
+# Another way to add a line:
+# add fitted line using lines() function; just like plotting x-y values in
+# algebra class. The lines() function adds lines to an existing plot.
+plot(log(marketvalue) ~ log(assets), data=forbes, col="gray")
+lines(x = sort(log(forbes$assets)), y = sort(fitted(mod)), col = "blue")
+
 
 # fit a quadratic term; I() is the identity function
 mod2 <- lm(log(marketvalue) ~ log(assets) + I(log(assets)^2), data=forbes) 
@@ -438,11 +442,13 @@ rm(mod, mod2)
 
 
 # chi-square test of independence
-# 2000 General Social Survey
-# Agresti, A. (2007). An introduction to categorical data analysis (Hoboken, NJ: Wiley-Interscience). p. 37, section 2.4.4, Table 2.5
+# 1991 General Social Survey
+# An Introduction to Categorical Data Analysis (Agresti, 1996), p. 31
+# Table 2.5
+
 # manually enter data from Table 2.5 into a matrix
 # The matrix function fills by column
-table_2.5 <- matrix(c(762, 327, 468, 484, 239, 477), ncol=3)
+table_2.5 <- matrix(data = c(279,165,73,47,225,191), ncol=3)
 table_2.5
 colnames(table_2.5) <- c("Dem","Ind","Rep")
 rownames(table_2.5) <- c("Females","Males")
@@ -481,6 +487,18 @@ boxplot(sales ~ US, data = forbes)
 boxplot(log(sales) ~ US, data = forbes)
 
 
+# Analysis of Variance (ANOVA)
+
+# Are the means between Sepal.Length different between the three species of
+# iris?
+boxplot(Sepal.Length ~ Species, data = iris)
+aggregate(Sepal.Length ~ Species, data = iris, mean)
+aggregate(Sepal.Length ~ Species, data = iris, sd)
+
+aov.out <- aov(Sepal.Length ~ Species, data = iris)
+summary(aov.out)
+
+
 
 # Packages ----------------------------------------------------------------
 
@@ -510,37 +528,39 @@ library(corrplot)
 search()
 
 # compute a correlation matrix of numeric forbes values;
+# The cor() function does this for us.
 # they are in columns 5 - 8, so use indexing notation to select;
 # need use="complete.obs" because of missing values in profit
 M <- cor(forbes[,5:8], use="complete.obs")
 M
 
 
-
 # now use corrplot function to visualize
 corrplot(M)
 corrplot(M, diag=FALSE, addCoef.col="black")
+corrplot(M, type = "lower", diag=FALSE, addCoef.col="black")
 
 # See ?corrplot for many more examples
 
 # A few packages to know about:
+# - haven (Import 'SPSS', 'Stata' and 'SAS' Files)
+# - readxl (Read Excel files)
 # - ggplot2 (data visualization)
 # - reshape2 (reshape data)
 # - dplyr (data manipulation for data frames)
 # - lme4 (multilevel modeling)
+# - car (companion to applied regression)
 
 # Note: Packages often have dependencies. This means installing one package
 # will also install other packages it depends on. Example: installing
 # ggplot2 package will install 9 other packages it uses.
 
 
-# Back to presentation
-
 
 # Bonus material! ---------------------------------------------------------
 
-# Stuff I'm pretty sure we won't have time for but you might like to review in
-# your free time.
+# Stuff I'm not sure we'll have time for but you might like to review in your
+# free time.
 
 # Missing data ------------------------------------------------------------
 
@@ -574,19 +594,6 @@ nrow(forbes)
 nrow(forbesComplete)
 
 rm(forbesComplete)
-
-
-# two-sample t-test -------------------------------------------------------
-
-# t test using data that comes with R (see datsets package)
-# Student's sleep data
-# Data which show the effect of two soporific drugs 
-# (increase in hours of sleep compared to control) on 10 patients.
-sleep
-plot(extra ~ group, data = sleep)
-# is there a difference in mean extra sleep between groups?
-t.test(extra ~ group, data = sleep)
-t.test(extra ~ group, data = sleep, var.equal = TRUE) # assume equal variance
 
 
 # simulation example ------------------------------------------------------
@@ -664,4 +671,3 @@ n1 <- 1605
 n2 <- 3
 divisible(n1,n2)
 rm(n1,n2)
-
