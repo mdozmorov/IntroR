@@ -48,11 +48,11 @@ Both are available for Windows, Mac, and Linux and free to install (no catches).
 
 ## R basics - functions
 
-* R uses *functions* to perform operations.
+* R uses *functions* to do things.
 
-* Functions take *arguments* to specify how operations are performed. Example:
+* Functions take *arguments* to specify how to do those things. Example:
 
-`read.csv(file="scores.csv")` 
+    + `read.csv(file="scores.csv")` 
 
 * `read.csv` is a function to import a CSV file; `file` is an argument.
 

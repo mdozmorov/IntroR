@@ -54,7 +54,7 @@ dim(iris)
 
 # You can import just about any kind of data into R: Excel, Stata, SPSS, SAS, 
 # CSV, JSON, fixed-width, TXT, DAT, shape files, and on and on. You can even 
-# connect to data bases. The best way to figure out how: Google "how to import 
+# connect to databases. The best way to figure out how: Google "how to import 
 # <type> files into R." This will usually involve installing and loading a
 # special R package, which we'll talk about later.
 
@@ -80,6 +80,7 @@ dim(iris)
 # Tab. A list of directories should pop up. Keep selecting directories and
 # hitting TAB until you arrive at the directory where you downloaded the 
 # workshop files.
+setwd("~/_workshops/IntroR/")
 
 
 # Loading/Importing Data --------------------------------------------------
@@ -88,7 +89,7 @@ dim(iris)
 # source: Handbook of Statistical Analysis Using R (Everitt & Hothorn)
 # amounts in billion US dollars
     
-# Import a CSV file and create a "dataframe"; here are three ways to do it:
+# Import a CSV file and create a "data.frame"; here are three ways to do it:
 
 # (1) read file from working directory on computer. If we've already set our 
 # working directory to the location where the CSV file is located, we just need
@@ -111,7 +112,8 @@ forbes <- read.csv("http://people.virginia.edu/~jcf2d/workshops/R/Forbes2000.csv
 # view structure of data
 str(forbes)
 
-# Can also click the name in the Environment window
+# Can also click the blue arrow next to the name in the Environment window. To
+# see the data click "forbes".
 
 # We can also just enter forbes in the console and hit Enter. That's not very
 # useful. Try it and see what happens.
@@ -137,6 +139,10 @@ levels(forbes$category)
 # Notice the construction "forbes$category". That allows us to extract just the
 # category column.
 
+# YOUR TURN: Repeat the previous step, but this time for the "country" column. 
+# Let's see which countries are in this data. Notice the RStudio autocomplete
+# options.
+
 
 # Indexing brackets -------------------------------------------------------
 
@@ -152,7 +158,7 @@ levels(forbes$category)
 # 1:6 = 1,2,3,4,5,6
 forbes[1:6,1:2] 
 
-# first six rows
+# first six rows; nothing after the comma means "show all columns"
 forbes[1:6,] 
 
 # columns 2 and 3
@@ -176,8 +182,7 @@ forbes[1,-c(7,8)]
 forbes$name
 forbes$name[1:10] # first 10
 
-# On the next line type forbes$. What happens?
-
+# Notice we did't need a comma because a vector only has one dimension.
 
 
 # Subsetting data ---------------------------------------------------------
@@ -186,31 +191,97 @@ forbes$name[1:10] # first 10
 # companies had sales over 100 billion? Which companies from Canada are in the
 # list? Which Banking companies from the United States are in the list?
 
-# We can define conditions in our indexing brackets.
+# We can define conditions in our indexing brackets such that only rows where
+# the condition is TRUE are shown.
 
-# Show rows with sales greater than 100 billion
+# TASK: Show companies with sales greater than 100 billion.
+
+# This comparison returns TRUE/FALSE
+forbes$sales > 100
+
+# Using the comparison inside brackets before the comma will return only rows
+# that are TRUE
 forbes[forbes$sales > 100,]
 
-# Show rows where country is equal to Canada
+# We can select certain columns if we like:
+forbes[forbes$sales > 100, c("name","sales")]
+
+# More examples:
+
+# Show all Canadian countries:
+
+# Show rows where country is equal to Canada. Notice the double equals ("==")
 forbes[forbes$country=="Canada",]
 
-# Show rows where country equals United States and industry equals Banking.
+# Show all "Kong/China" and "Hong Kong/China" companies; The bar | means OR
+forbes[forbes$country=="Kong/China" | forbes$country=="Hong Kong/China",]
+
+# Looks like there were some data entry/data cleaning errors. See Bonus material
+# for one way to fix this in R.
+
+# Show all Banking companies in the United States
+
+# Show rows where country equals United States & industry equals Banking.
 forbes[forbes$country=="United States" & forbes$category=="Banking",]
 
 # We can save these subsets of data for future analysis:
 us.banking <- forbes[forbes$country=="United States" & forbes$category=="Banking",]
 
+# Works with vectors too. Show all US companies with marketvalue greater than 200
+forbes$company[forbes$marketvalue > 200]
 
 # We can also subset our data using the subset() function. The syntax is 
-# subset(data, condition)
+# subset(data, condition). Notice we don't have to keep typing "forbes" before
+# each column name.
 subset(forbes, sales > 100)
 subset(forbes, country == "Canada")
 subset(forbes, country == "United States" & category == "Banking")
 
 # We can also select certain columns. For example:
-subset(forbes, sales > 100 & country != "United States", c("name","category"))
+subset(forbes, sales > 100 & country != "United States", sales:marketvalue)
+subset(forbes, sales > 100 & country != "United States", c(name, category))
 
 # YOUR TURN! Select all non-United States companies in the Utilities category.
+
+
+
+# Some basic data manipulation --------------------------------------------
+
+# Here's one way to change column names:
+names(forbes) # view column names; returns a vector
+names(forbes)[2] # view 2nd column name
+names(forbes)[2] <- "company"  # assign "company" as 2nd column name
+names(forbes)
+
+
+# We can derive new columns. Here we subtract profits from sales to create a new
+# column caled totalcosts:
+forbes$totalcosts <- forbes$sales - forbes$profits
+
+# Add a new column for log-transformed sales
+forbes$logsales <- log(forbes$sales)
+
+# create an indicator for US or non-US company using ifelse function
+# syntax: ifelse(condition, action if TRUE, action if FALSE)
+forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
+
+# dropping columns (variables)
+forbes$totalcosts <- NULL
+forbes$logsales <- NULL
+
+# Recode a continuous variable into categories. 
+
+# Here we recode sales into four categories: (0,5], (5,10], (10,100], (100,500]
+forbes$salesCat <- cut(forbes$sales, breaks = c(0,5,10,100,500))
+summary(forbes$salesCat)
+
+# We can add labels:
+forbes$salesCat <- cut(forbes$sales, breaks = c(0,5,10,100,500), 
+                       labels = c("small","mid-small","mid-large","large"))
+summary(forbes$salesCat)
+
+# YOUR TURN! Add a column called salesM that is for sales in millions instead of
+# billions. (ie, multiply by 1000)
 
 
 # Basic summary stats -----------------------------------------------------
@@ -218,13 +289,16 @@ subset(forbes, sales > 100 & country != "United States", c("name","category"))
 # The summary function is nice for quickly generating summaries of all columns,
 # but we often want to generate specific summaries.
 
-# to calculate frequencies of a factor, or categorical variable
+# to calculate frequencies of a factor, or categorical variable, use the table
+# or summary functions:
 table(forbes$category)
 summary(forbes$category)
 
 # sort category count in increasing or decreasing order
 sort(table(forbes$category))
 sort(table(forbes$category), decreasing = TRUE)
+# Top 5
+sort(table(forbes$category), decreasing = TRUE)[1:5]
 
 # summarize numeric columns
 mean(forbes$sales)
@@ -241,15 +315,15 @@ summary(forbes$profits)
 median(forbes$sales)
 sd(forbes$sales) # standard deviation
 range(forbes$sales) # returns min and max values
-quantile(forbes$sales)
+quantile(forbes$sales) # 25th, 50th, 75th quantiles (percentiles)
 quantile(forbes$sales, probs=c(0.1,0.9)) # 10th and 90th quantiles
 summary(forbes$sales)
 
-# Counting number of conditions satisfied. For example, how many companies had
-# sales over 5 billion?
+# Counting number of conditions satisfied. 
 
-# The following generates a vector of TRUE/FALSE values (and some NA where
-# profit is missing)
+# For example, how many companies had sales over 5 billion?
+
+# The following generates a vector of TRUE/FALSE values:
 forbes$sales > 5
 
 # In R, TRUE = 1 and FALSE = 0, so we can do math with TRUE/FALSE values. How
@@ -270,42 +344,10 @@ mean(forbes$profits < 0, na.rm = TRUE)
 table(forbes$sales > 5)
 table(forbes$profits < 0)
 
+# Notice table() ignores NAs by default.
+
 # YOUR TURN! What percent of the Forbes 2000 list is from the United States?
 
-
-
-# Some basic data manipulation --------------------------------------------
-
-# Here's how to change column names:
-names(forbes) # view column names
-names(forbes)[2] # view 2nd column name
-names(forbes)[2] <- "company"  # assign "company" as 2nd column name
-names(forbes)
-
-
-# We can derive new columns. Here we subtract profits from sales to create a new
-# column caled totalcosts:
-forbes$totalcosts <- forbes$sales - forbes$profits
-
-# Add a new column for log-transformed sales
-forbes$logsales <- log(forbes$sales)
-
-# create an indicator for US or non-US company using ifelse function
-# syntax: ifelse(condition, action if TRUE, action if FALSE)
-forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
-table(forbes$US)
-
-# Could also just do this; generates TRUE/FALSE:
-# forbes$US <- ifelse(forbes$country=="United States")
-
-
-# dropping columns (variables)
-forbes$totalcosts <- NULL
-forbes$logsales <- NULL
-
-# YOUR TURN! Add a column called salesM that is for sales in millions instead of
-# billions. (ie, multiply by 1000)
-forbes$salesM <- forbes$sales*1000
 
 
 # Aggregating and Summarizing Data ----------------------------------------
@@ -323,11 +365,15 @@ table(forbes$category, forbes$US)
 with(forbes, table(category,US))
 
 # calculate percents with prop.table
+
+# First we save the table object as CatTable
 CatTable <- with(forbes, table(category, US))
+CatTable
+
 prop.table(CatTable, margin = 1) # rows proportions sum to 1
 prop.table(CatTable, margin = 2) # columns proportions sum to 1
 
-# for basic summary stats use aggregate
+# For basic numeric summary stats use the aggregate() function.
 # syntax: aggregate(numeric ~ category, data, statistic)
 
 # median profits by category
@@ -338,6 +384,9 @@ aggregate(sales ~ country, forbes, mean)
 
 # total profits by country
 aggregate(profits ~ country, forbes, sum)
+
+# aggregate provides a subset argument that allows us to subset data before
+# aggregation.
 
 # total profits by country for companies with profits
 aggregate(profits ~ country, forbes, sum, subset= profits > 0)
@@ -440,8 +489,8 @@ lines(x = sort(log(forbes$assets)), y = sort(fitted(mod2)), col = "red")
 rm(mod, mod2)
 
 
-
 # chi-square test of independence
+
 # 1991 General Social Survey
 # An Introduction to Categorical Data Analysis (Agresti, 1996), p. 31
 # Table 2.5
@@ -460,30 +509,32 @@ results <- chisq.test(table_2.5)
 str(results) # more than meets the eye! A list object.
 results$statistic
 results$p.value
+results$residuals
 
 rm(table_2.5, results)
 
-# hypothesis test and confidence interval
-# Probability and Statistical Inference (Hogg & Tanis, 2006), p. 492
-# problem 8.2-6
-# A coach claims FVC (forced vital capacity) of players is greater than 3.4 liters;
-# nine players randomly sampled
-fvc <- c(3.4, 3.6, 3.8, 3.3, 3.4, 3.5, 3.7, 3.6, 3.7)
-# Null: mean <= 3.4
-# Alternative: mean > 3.4
-t.test(fvc, mu = 3.4, alternative = "greater")
-tout <- t.test(fvc, mu = 3.4, alternative = "greater")
-str(tout) # a list object
-tout$p.value
-rm(fvc, tout)
 
+# Two-sample t-test 
 
-# Two-sample t-test
-# Are means sales different between US and non-US companies?
+# Are means sales different between US and non-US companies in the Forbes 2000
+# list?
 aggregate(sales ~ US, data = forbes, mean)
-t.test(sales ~ US, data = forbes)
+
+# An assumption is the populations from which the samples have been drawn should
+# be normal. They don't look normal:
+par(mfrow=c(1,2))
+hist(forbes$sales[forbes$US=="US"])
+hist(forbes$sales[forbes$US!="US"])
+par(mfrow=c(1,1))
+
+# We may want to work with the log transformed data
+par(mfrow=c(1,2))
+hist(log(forbes$sales[forbes$US=="US"]))
+hist(log(forbes$sales[forbes$US!="US"]))
+par(mfrow=c(1,1))
+
+# Now perform the t-test on the log transformed data
 t.test(log(sales) ~ US, data = forbes)
-boxplot(sales ~ US, data = forbes)
 boxplot(log(sales) ~ US, data = forbes)
 
 
@@ -550,6 +601,8 @@ corrplot(M, type = "lower", diag=FALSE, addCoef.col="black")
 # - dplyr (data manipulation for data frames)
 # - lme4 (multilevel modeling)
 # - car (companion to applied regression)
+# - stringr (for working with character data)
+# - lubridate (for working with time and dates)
 
 # Note: Packages often have dependencies. This means installing one package
 # will also install other packages it depends on. Example: installing
@@ -561,6 +614,60 @@ corrplot(M, type = "lower", diag=FALSE, addCoef.col="black")
 
 # Stuff I'm not sure we'll have time for but you might like to review in your
 # free time.
+
+
+# Fixing the country errors -----------------------------------------------
+
+# Recall this issue
+forbes[forbes$country=="Kong/China",]
+
+# Looks like "Hong" was pulled into the name column instead of the country
+# column. We need to fix the company and country column.
+
+# First let's fix the company name.
+forbes$company[forbes$country=="Kong/China"]
+
+# We'll use the str_sub function from the stringr package.
+
+# Install package if you don't already have it and load it.
+install.packages("stringr") 
+library(stringr)
+
+# We need to convert the company column from factor to character. A factor is a 
+# categorical variable, but internally it is stored as an integer with "levels".
+# By default R converts character data to factor when importing data from a CSV
+# file.
+
+# convert to character
+forbes$company <- as.character(forbes$company)
+
+# The str_sub function with the end argument set to -6 will extract everything
+# from a character string except the last 5 characters.
+str_sub(forbes$company[forbes$country=="Kong/China"], end = -6)
+
+# We can simultaneously select the company names and assign them new names
+forbes$company[forbes$country=="Kong/China"] <- str_sub(forbes$company[forbes$country=="Kong/China"], 
+                                                        end = -6)
+
+# Verify
+forbes$company[forbes$country=="Kong/China"]
+
+# Now fix the country:
+
+# First change from factor to character:
+forbes$country <- as.character(forbes$country)
+
+# We can simultaneously select the company names and assign them new names:
+forbes$country[forbes$country=="Kong/China"] <- "Hong Kong/China"
+
+# If we wanted we could change country and company back to a factor. Not really
+# necessary, but here's how to do it: 
+
+# forbes$country <- factor(forbes$country) 
+# forbes$company <- factor(forbes$company)
+
+# EXCERCISE: Try fixing the "Africa" records using the syntaxt above as a template.
+
 
 # Missing data ------------------------------------------------------------
 
@@ -594,6 +701,24 @@ nrow(forbes)
 nrow(forbesComplete)
 
 rm(forbesComplete)
+
+
+# hypothesis test and confidence interval ---------------------------------
+
+
+# Probability and Statistical Inference (Hogg & Tanis, 2006), p. 492
+# problem 8.2-6
+# A coach claims FVC (forced vital capacity) of players is greater than 3.4 liters;
+# nine players randomly sampled
+fvc <- c(3.4, 3.6, 3.8, 3.3, 3.4, 3.5, 3.7, 3.6, 3.7)
+# Null: mean <= 3.4
+# Alternative: mean > 3.4
+t.test(fvc, mu = 3.4, alternative = "greater")
+tout <- t.test(fvc, mu = 3.4, alternative = "greater")
+str(tout) # a list object
+tout$estimate
+tout$p.value
+rm(fvc, tout)
 
 
 # simulation example ------------------------------------------------------
