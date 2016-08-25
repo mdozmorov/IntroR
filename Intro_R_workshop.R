@@ -49,8 +49,9 @@ dim(iris)
 
 # The iris data is nice for playing with R, but eventually we need to load our 
 # own data. Also it's worth noting that R really isn't for data entry. You can 
-# do it, but it's easier to use something like Excel for data collection and
-# data entry. R is for cleaning and analyzing data you have already collected.
+# do it, but it's easier to use something like Excel for data collection and 
+# data entry. R is for manipulating and analyzing data you have already
+# collected.
 
 # You can import just about any kind of data into R: Excel, Stata, SPSS, SAS, 
 # CSV, JSON, fixed-width, TXT, DAT, shape files, and on and on. You can even 
@@ -60,14 +61,14 @@ dim(iris)
 
 # Today we'll import a CSV file.
 
-# Before we do that let's set our working directory. Your working directory is
-# where R looks for files if you don't provide a path to the file. The working
-# directory is displayed in the header of the console. You typically set your
-# working directory to where your research or project files are located.
+# Before we do that let's set our working directory. Your working directory is 
+# where R looks for files if you don't provide a path to the file. You typically
+# set your working directory to where your research or project files are
+# located. The working directory is displayed in the header of the console.
 
 # Good to know:
-# "/" is your root directory
 # "~/" is your home directory
+# "/" is your root directory
 
 # To set working directory via point-and-click:
 # Session...Set Working Directory...Choose Directory
@@ -83,7 +84,7 @@ dim(iris)
 setwd("~/_workshops/IntroR/")
 
 
-# Loading/Importing Data --------------------------------------------------
+# Loading CSV data --------------------------------------------------------
 
 # Forbes 2000 list from 2004 
 # source: Handbook of Statistical Analysis Using R (Everitt & Hothorn)
@@ -98,13 +99,11 @@ forbes <- read.csv("Forbes2000.csv")
 
 # (2) read from a web site. If the file is on the web, simply copy-and-paste the
 # URL and enclose in quotes:
-forbes <- read.csv("http://people.virginia.edu/~jcf2d/workshops/R/Forbes2000.csv")
+forbes <- read.csv("http://people.virginia.edu/~jcf2d/data/Forbes2000.csv")
 
 # (3) use the RStudio "Import Dataset" button in the Environment window. Click
 # on "Import Dataset", select "From Local File...", and navigate to file.
 
-# another common function: read.table()
-# (read.csv is actually read.table with different defaults.)
 
 
 # Inspecting Data ---------------------------------------------------------
@@ -115,33 +114,38 @@ str(forbes)
 # Can also click the blue arrow next to the name in the Environment window. To
 # see the data click "forbes".
 
-# We can also just enter forbes in the console and hit Enter. That's not very
-# useful. Try it and see what happens.
+# Notice the non-numeric data is "Factor". This basically means a categorical 
+# variable. "Factor w/ 57 levels" for country means there are 57 unique 
+# countries in this data. But notice the numbers. Factors are actually stored as
+# integers, and the integers have associated "levels".
 
-# It blew away our console! And it didn't even display all the data. R has a
-# default limit for printing information to the console. 
+# If you plan to do any statistical modeling with categorical data, you'll want
+# it stored as a Factor.
 
-# Good time to tell you about this keyboard shortcut:
-# Ctrl + L (Win) or Command + L (Mac) to clear console
+# If we don't want non-numeric data stored as factors upon import, we
+# can set stringsAsFactors = FALSE, like this:
+forbes2 <- read.csv("Forbes2000.csv", stringsAsFactors = FALSE)
+str(forbes2)
+# Notice the non-numeric columns are simply character now.
 
-
-head(forbes)
-tail(forbes)
-dim(forbes) 
-
-names(forbes)
+# Let's call the summary function on both data frames
 summary(forbes) 
+summary(forbes2) 
 
-# country and category are stored as factors, or categorical variables. We can
-# see all the different categories with the levels function:
-levels(forbes$category)
+# In the second summary call, notice character data is not summarized like
+# Factors are in the first summary call.
 
-# Notice the construction "forbes$category". That allows us to extract just the
-# category column.
+# "Which is better: character or Factor?" That's the wrong question. We should
+# ask "what's the difference?"
 
-# YOUR TURN: Repeat the previous step, but this time for the "country" column. 
-# Let's see which countries are in this data. Notice the RStudio autocomplete
-# options.
+# If you plan to run ANOVA or linear models, you need to store your text data as
+# Factors.
+
+# If you plan to manipulate or use patterns of character data, for say text
+# mining, you want to store your text data as character.
+
+# YOUR TURN!
+# Try the pairs function on the forbes data. What do you think?
 
 
 # Indexing brackets -------------------------------------------------------
@@ -180,16 +184,22 @@ forbes[1,-c(7,8)]
 
 # We can access columns of a data frame using $ as follows
 forbes$name
-forbes$name[1:10] # first 10
 
-# Notice we did't need a comma because a vector only has one dimension.
+# First 10 cells of the name column
+forbes$name[1:10]
+
+# Notice we didn't need a comma because a vector only has one dimension.
+
+# YOUR TURN!
+# use the pairs() function on columns 5 - 8 of the forbes data:
+
 
 
 # Subsetting data ---------------------------------------------------------
 
 # We often want to see parts of our data that meet a certain condition. Which 
-# companies had sales over 100 billion? Which companies from Canada are in the
-# list? Which Banking companies from the United States are in the list?
+# companies had sales over 100 billion? Which companies are from Canada? Which
+# Banking companies are from the United States?
 
 # We can define conditions in our indexing brackets such that only rows where
 # the condition is TRUE are shown.
@@ -208,16 +218,12 @@ forbes[forbes$sales > 100, c("name","sales")]
 
 # More examples:
 
+
 # Show all Canadian countries:
 
 # Show rows where country is equal to Canada. Notice the double equals ("==")
 forbes[forbes$country=="Canada",]
 
-# Show all "Kong/China" and "Hong Kong/China" companies; The bar | means OR
-forbes[forbes$country=="Kong/China" | forbes$country=="Hong Kong/China",]
-
-# Looks like there were some data entry/data cleaning errors. See Bonus material
-# for one way to fix this in R.
 
 # Show all Banking companies in the United States
 
@@ -225,10 +231,10 @@ forbes[forbes$country=="Kong/China" | forbes$country=="Hong Kong/China",]
 forbes[forbes$country=="United States" & forbes$category=="Banking",]
 
 # We can save these subsets of data for future analysis:
-us.banking <- forbes[forbes$country=="United States" & forbes$category=="Banking",]
+us.banks <- forbes[forbes$country=="United States" & forbes$category=="Banking",]
 
 # Works with vectors too. Show all US companies with marketvalue greater than 200
-forbes$company[forbes$marketvalue > 200]
+forbes$name[forbes$marketvalue > 200]
 
 # We can also subset our data using the subset() function. The syntax is 
 # subset(data, condition). Notice we don't have to keep typing "forbes" before
@@ -238,6 +244,7 @@ subset(forbes, country == "Canada")
 subset(forbes, country == "United States" & category == "Banking")
 
 # We can also select certain columns. For example:
+subset(forbes, sales > 100, c(name, sales))
 subset(forbes, sales > 100 & country != "United States", sales:marketvalue)
 subset(forbes, sales > 100 & country != "United States", c(name, category))
 
@@ -247,15 +254,9 @@ subset(forbes, sales > 100 & country != "United States", c(name, category))
 
 # Some basic data manipulation --------------------------------------------
 
-# Here's one way to change column names:
-names(forbes) # view column names; returns a vector
-names(forbes)[2] # view 2nd column name
-names(forbes)[2] <- "company"  # assign "company" as 2nd column name
-names(forbes)
+# (1) Deriving new columns (or variables)
 
-
-# We can derive new columns. Here we subtract profits from sales to create a new
-# column caled totalcosts:
+# Subtract profits from sales to create a new column caled totalcosts:
 forbes$totalcosts <- forbes$sales - forbes$profits
 
 # Add a new column for log-transformed sales
@@ -265,13 +266,20 @@ forbes$logsales <- log(forbes$sales)
 # syntax: ifelse(condition, action if TRUE, action if FALSE)
 forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
 
-# dropping columns (variables)
+# Create a column of TRUE/FALSE based on whether profits are positive
+forbes$profitsI <- forbes$profits > 0
+
+
+# (2) dropping columns (variables)
+
 forbes$totalcosts <- NULL
 forbes$logsales <- NULL
+forbes$profitsI <- NULL
 
-# Recode a continuous variable into categories. 
+# (3) Recode a continuous variable into categories. 
 
 # Here we recode sales into four categories: (0,5], (5,10], (10,100], (100,500]
+# using the cut() function
 forbes$salesCat <- cut(forbes$sales, breaks = c(0,5,10,100,500))
 summary(forbes$salesCat)
 
@@ -289,10 +297,10 @@ summary(forbes$salesCat)
 # The summary function is nice for quickly generating summaries of all columns,
 # but we often want to generate specific summaries.
 
-# to calculate frequencies of a factor, or categorical variable, use the table
-# or summary functions:
-table(forbes$category)
-summary(forbes$category)
+# to calculate frequencies of a factor or character variable use the table
+# function:
+table(forbes$category) # factor
+table(forbes2$category) # character
 
 # sort category count in increasing or decreasing order
 sort(table(forbes$category))
@@ -346,7 +354,8 @@ table(forbes$profits < 0)
 
 # Notice table() ignores NAs by default.
 
-# YOUR TURN! What percent of the Forbes 2000 list is from the United States?
+# YOUR TURN! 
+# What proportion of the Forbes 2000 list is from the United States?
 
 
 
@@ -375,6 +384,7 @@ prop.table(CatTable, margin = 2) # columns proportions sum to 1
 
 # For basic numeric summary stats use the aggregate() function.
 # syntax: aggregate(numeric ~ category, data, statistic)
+# NOTE: aggregate ignores missing data by default
 
 # median profits by category
 aggregate(profits ~ category, data=forbes, median)
@@ -385,17 +395,16 @@ aggregate(sales ~ country, forbes, mean)
 # total profits by country
 aggregate(profits ~ country, forbes, sum)
 
-# aggregate provides a subset argument that allows us to subset data before
+# mean sales by US/Not US and category
+aggregate(sales ~ US + category, forbes, mean)
+
+
+# aggregate also provides a subset argument that allows us to subset data before
 # aggregation.
 
 # total profits by country for companies with profits
 aggregate(profits ~ country, forbes, sum, subset= profits > 0)
 
-# mean sales by category and US/Not US
-aggregate(sales ~ category + US, forbes, mean)
-
-# YOUR TURN! What is the mean marketvalue by category for companies not in the
-# US?
 
 
 # Simple Graphics ---------------------------------------------------------
@@ -426,25 +435,71 @@ hist(log(forbes$marketvalue)) # more symmetric
 hist(log(forbes$marketvalue),prob=TRUE) # show probability densities
 hist(log(forbes$marketvalue),prob=TRUE, breaks=20) # more bins
 
-# multiple graphs in one plot
-# par = graphical parameters; mfrow = multi-frame row
-par(mfrow=c(1,2)) # divide graphics window into 2 "frames"
-
-hist(forbes$marketvalue, main="Market Value", col="red")
-hist(log(forbes$marketvalue), main="Log Market Value", col="blue")
-
-# reset graphics window to 1x1 frame
-par(mfrow=c(1,1))
-
 # boxplots
 # boxplot(numeric ~ category)
-boxplot(log(marketvalue) ~ US, data=forbes, main="Market Value")
+boxplot(log(marketvalue) ~ salesCat, data=forbes, main="Log Market Value by Sales Category")
 
 # See Past StatLab Workshops for an Intro to R Graphics:
 # http://data.library.virginia.edu/workshops/past-workshops/
 
 
-# statisical analysis -----------------------------------------------------
+
+# Packages ----------------------------------------------------------------
+
+# Come to R for the price, stay for the packages.
+
+# What packages are available?:
+# https://cran.r-project.org/web/packages/available_packages_by_name.html
+
+# To install a package in RStudio:
+
+# 1. click the Install button on the Packages tab
+# 2. type in the name of the package
+# 3. click install.
+
+# or use the install.packages function
+
+# packages only need to be installed once
+
+# corrplot: Visualization of a correlation matrix
+install.packages("corrplot")
+
+# load the package; need to do this every time you want to use it
+library(corrplot)
+
+# compute a correlation matrix of numeric forbes values;
+# The cor() function does this for us.
+# they are in columns 5 - 8, so use indexing notation to select;
+# need use="complete.obs" because of missing values in profit
+M <- cor(forbes[,5:8], use="complete.obs")
+M
+
+
+# now use corrplot function to visualize
+corrplot(M)
+corrplot(M, diag=FALSE, addCoef.col="black")
+corrplot(M, diag=FALSE, addCoef.col="black", type="lower")
+
+# See ?corrplot for many more examples
+
+# A few packages to know about:
+# - haven (Import 'SPSS', 'Stata' and 'SAS' Files)
+# - readxl (Read Excel files)
+# - ggplot2 (data visualization)
+# - reshape2 (reshape data)
+# - dplyr (data manipulation for data frames)
+# - lme4 (multilevel modeling)
+# - car (companion to applied regression)
+# - stringr (for working with character data)
+# - lubridate (for working with time and dates)
+
+# Note: Packages often have dependencies. This means installing one package
+# will also install other packages it depends on. Example: installing
+# ggplot2 package will install 9 other packages it uses.
+
+
+
+# statisical analysis examples --------------------------------------------
 
 # basic linear regression
 
@@ -476,17 +531,9 @@ plot(log(marketvalue) ~ log(assets), data=forbes, col="gray")
 lines(x = sort(log(forbes$assets)), y = sort(fitted(mod)), col = "blue")
 
 
-# fit a quadratic term; I() is the identity function
-mod2 <- lm(log(marketvalue) ~ log(assets) + I(log(assets)^2), data=forbes) 
-summary(mod2) 
-
-# add fitted line: 
-lines(x = sort(log(forbes$assets)), y = sort(fitted(mod2)), col = "red")
-
-
-# Want to learn more? See the Linear Modeling in R workshop from October 2014:
+# Want to learn more? See the Linear Modeling in R workshop:
 # http://static.lib.virginia.edu/statlab/materials/workshops/LinearModelingR.zip
-rm(mod, mod2)
+rm(mod)
 
 
 # chi-square test of independence
@@ -522,16 +569,12 @@ aggregate(sales ~ US, data = forbes, mean)
 
 # An assumption is the populations from which the samples have been drawn should
 # be normal. They don't look normal:
-par(mfrow=c(1,2))
 hist(forbes$sales[forbes$US=="US"])
 hist(forbes$sales[forbes$US!="US"])
-par(mfrow=c(1,1))
 
 # We may want to work with the log transformed data
-par(mfrow=c(1,2))
 hist(log(forbes$sales[forbes$US=="US"]))
 hist(log(forbes$sales[forbes$US!="US"]))
-par(mfrow=c(1,1))
 
 # Now perform the t-test on the log transformed data
 t.test(log(sales) ~ US, data = forbes)
@@ -546,67 +589,9 @@ boxplot(Sepal.Length ~ Species, data = iris)
 aggregate(Sepal.Length ~ Species, data = iris, mean)
 aggregate(Sepal.Length ~ Species, data = iris, sd)
 
+# use the aov() function to run an ANOVA
 aov.out <- aov(Sepal.Length ~ Species, data = iris)
 summary(aov.out)
-
-
-
-# Packages ----------------------------------------------------------------
-
-# Come to R for the price, stay for the packages.
-
-# What packages are available?:
-# https://cran.r-project.org/web/packages/available_packages_by_name.html
-
-# To install a package in RStudio:
-
-# 1. click the Install button on the Packages tab
-# 2. type in the name of the package
-# 3. click install.
-
-# or use the install.packages function
-
-# packages only need to be installed once
-
-# a lovely simple package: corrplot
-# Visualization of a correlation matrix
-install.packages("corrplot")
-
-# load the package; need to do this every time you want to use it
-library(corrplot)
-
-# which packages are currently loaded? Use the search function
-search()
-
-# compute a correlation matrix of numeric forbes values;
-# The cor() function does this for us.
-# they are in columns 5 - 8, so use indexing notation to select;
-# need use="complete.obs" because of missing values in profit
-M <- cor(forbes[,5:8], use="complete.obs")
-M
-
-
-# now use corrplot function to visualize
-corrplot(M)
-corrplot(M, diag=FALSE, addCoef.col="black")
-corrplot(M, type = "lower", diag=FALSE, addCoef.col="black")
-
-# See ?corrplot for many more examples
-
-# A few packages to know about:
-# - haven (Import 'SPSS', 'Stata' and 'SAS' Files)
-# - readxl (Read Excel files)
-# - ggplot2 (data visualization)
-# - reshape2 (reshape data)
-# - dplyr (data manipulation for data frames)
-# - lme4 (multilevel modeling)
-# - car (companion to applied regression)
-# - stringr (for working with character data)
-# - lubridate (for working with time and dates)
-
-# Note: Packages often have dependencies. This means installing one package
-# will also install other packages it depends on. Example: installing
-# ggplot2 package will install 9 other packages it uses.
 
 
 
@@ -614,59 +599,6 @@ corrplot(M, type = "lower", diag=FALSE, addCoef.col="black")
 
 # Stuff I'm not sure we'll have time for but you might like to review in your
 # free time.
-
-
-# Fixing the country errors -----------------------------------------------
-
-# Recall this issue
-forbes[forbes$country=="Kong/China",]
-
-# Looks like "Hong" was pulled into the name column instead of the country
-# column. We need to fix the company and country column.
-
-# First let's fix the company name.
-forbes$company[forbes$country=="Kong/China"]
-
-# We'll use the str_sub function from the stringr package.
-
-# Install package if you don't already have it and load it.
-install.packages("stringr") 
-library(stringr)
-
-# We need to convert the company column from factor to character. A factor is a 
-# categorical variable, but internally it is stored as an integer with "levels".
-# By default R converts character data to factor when importing data from a CSV
-# file.
-
-# convert to character
-forbes$company <- as.character(forbes$company)
-
-# The str_sub function with the end argument set to -6 will extract everything
-# from a character string except the last 5 characters.
-str_sub(forbes$company[forbes$country=="Kong/China"], end = -6)
-
-# We can simultaneously select the company names and assign them new names
-forbes$company[forbes$country=="Kong/China"] <- str_sub(forbes$company[forbes$country=="Kong/China"], 
-                                                        end = -6)
-
-# Verify
-forbes$company[forbes$country=="Kong/China"]
-
-# Now fix the country:
-
-# First change from factor to character:
-forbes$country <- as.character(forbes$country)
-
-# We can simultaneously select the company names and assign them new names:
-forbes$country[forbes$country=="Kong/China"] <- "Hong Kong/China"
-
-# If we wanted we could change country and company back to a factor. Not really
-# necessary, but here's how to do it: 
-
-# forbes$country <- factor(forbes$country) 
-# forbes$company <- factor(forbes$company)
-
-# EXCERCISE: Try fixing the "Africa" records using the syntaxt above as a template.
 
 
 # Missing data ------------------------------------------------------------
