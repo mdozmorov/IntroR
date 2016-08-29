@@ -9,49 +9,28 @@
 
 # This R script is intended to get you started doing data analysis with R.
 
-# R comes with built-in data sets that we can use for learning purposes. The 
-# "hello world" data set of R is the "iris" data set. Put your cursor on the 
-# line below that says data(iris) and hit Ctrl + Enter (Windows/Linux) or Command +
-# Enter (Mac). This loads the built-in iris data set.
-
-data(iris)
-
-# The str() function will tell us about the structure of the data
-str(iris)
-
-# Notice the output in the console says iris is a "data.frame". Most data you'll
-# work with R will be a data.frame.
-
-# Click on "iris" in the Environment window to browse the data. 
-
-# Calling summary() on a data frame summarizes the columns of the data frame:
-summary(iris)
-
-# Calling pairs() on a data frame produces pair-wise scatter plots:
-pairs(iris)
-
-# Obviously this only works well for data.frames with a few columns.
-
-# other handy functions for investigating data.frames
-head(iris)
-head(iris, n=3)
-
-tail(iris)
-tail(iris, n=1)
-
-names(iris)
-nrow(iris)
-ncol(iris)
-dim(iris)
 
 
-# Loading our own data ----------------------------------------------------
+# Set your working directory ----------------------------------------------
 
-# The iris data is nice for playing with R, but eventually we need to load our 
-# own data. Also it's worth noting that R really isn't for data entry. You can 
-# do it, but it's easier to use something like Excel for data collection and 
-# data entry. R is for manipulating and analyzing data you have already
-# collected.
+# The first thing we often do in an R script is set our working directory. You 
+# usually set your working directory to where your data files are located. In
+# this script, we want to set our working directory to where you downloaded the
+# workshop files.
+
+# To set working directory via point-and-click:
+# Session...Set Working Directory...Choose Directory
+# Or Ctrl + Shift + H
+
+# To set working directory with R code:
+# use setwd() function; path must be in quotes
+
+setwd("~/_workshops/IntroR")
+
+
+
+# Loading data ------------------------------------------------------------
+
 
 # You can import just about any kind of data into R: Excel, Stata, SPSS, SAS, 
 # CSV, JSON, fixed-width, TXT, DAT, shape files, and on and on. You can even 
@@ -60,31 +39,6 @@ dim(iris)
 # special R package, which we'll talk about later.
 
 # Today we'll import a CSV file.
-
-# Before we do that let's set our working directory. Your working directory is 
-# where R looks for files if you don't provide a path to the file. You typically
-# set your working directory to where your research or project files are
-# located. The working directory is displayed in the header of the console.
-
-# Good to know:
-# "~/" is your home directory
-# "/" is your root directory
-
-# To set working directory via point-and-click:
-# Session...Set Working Directory...Choose Directory
-
-# To set working directory with R code:
-# use setwd() function; path must be in quotes
-
-# TRY NOW! 
-# Type "setwd" and open parens. Then in the parens type a double-quote. Then hit
-# Tab. A list of directories should pop up. Keep selecting directories and
-# hitting TAB until you arrive at the directory where you downloaded the 
-# workshop files.
-setwd("~/_workshops/IntroR/")
-
-
-# Loading CSV data --------------------------------------------------------
 
 # Forbes 2000 list from 2004 
 # source: Handbook of Statistical Analysis Using R (Everitt & Hothorn)
@@ -108,6 +62,8 @@ forbes <- read.csv("http://people.virginia.edu/~jcf2d/data/Forbes2000.csv")
 
 # Inspecting Data ---------------------------------------------------------
 
+# Click on "forbes" in the environment window to browse the data.
+
 # view structure of data
 str(forbes)
 
@@ -119,8 +75,8 @@ str(forbes)
 # countries in this data. But notice the numbers. Factors are actually stored as
 # integers, and the integers have associated "levels".
 
-# If you plan to do any statistical modeling with categorical data, you'll want
-# it stored as a Factor.
+# If you plan to do any statistical modeling (eg, regression) with categorical
+# data, you'll want it stored as a Factor.
 
 # If we don't want non-numeric data stored as factors upon import, we
 # can set stringsAsFactors = FALSE, like this:
@@ -128,7 +84,8 @@ forbes2 <- read.csv("Forbes2000.csv", stringsAsFactors = FALSE)
 str(forbes2)
 # Notice the non-numeric columns are simply character now.
 
-# Let's call the summary function on both data frames
+# Let's call the summary function on both data frames. When called on data
+# frames, the summary function returns a summary for each column.
 summary(forbes) 
 summary(forbes2) 
 
@@ -144,8 +101,20 @@ summary(forbes2)
 # If you plan to manipulate or use patterns of character data, for say text
 # mining, you want to store your text data as character.
 
-# YOUR TURN!
-# Try the pairs function on the forbes data. What do you think?
+
+
+# More inspection ---------------------------------------------------------
+
+# Some other functions for inspecting data frames. Try them out. What do they
+# do?
+
+head(forbes)
+tail(forbes)
+names(forbes)
+nrow(forbes)
+ncol(forbes)
+dim(forbes)
+pairs(forbes)
 
 
 # Indexing brackets -------------------------------------------------------
@@ -253,6 +222,8 @@ subset(forbes, sales > 100 & country != "United States", c(name, category))
 
 
 # Some basic data manipulation --------------------------------------------
+
+# Three common data manipulation tasks:
 
 # (1) Deriving new columns (or variables)
 
