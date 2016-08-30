@@ -25,7 +25,11 @@
 # To set working directory with R code:
 # use setwd() function; path must be in quotes
 
-setwd("~/_workshops/IntroR")
+# In RStudio, you can use the TAB key in the quotes to autocomplete the path.
+# Try it! 
+
+# Start with "/" to start from your root directory. 
+# Start with "~/" to start from your home directory.
 
 
 
@@ -40,9 +44,9 @@ setwd("~/_workshops/IntroR")
 
 # Today we'll import a CSV file.
 
-# Forbes 2000 list from 2004 
+# Data: Forbes 2000 list from 2004 
 # source: Handbook of Statistical Analysis Using R (Everitt & Hothorn)
-# amounts in billion US dollars
+# amounts are in billion US dollars
     
 # Import a CSV file and create a "data.frame"; here are three ways to do it:
 
@@ -75,8 +79,8 @@ str(forbes)
 # countries in this data. But notice the numbers. Factors are actually stored as
 # integers, and the integers have associated "levels".
 
-# If you plan to do any statistical modeling (eg, regression) with categorical
-# data, you'll want it stored as a Factor.
+# If you plan to do any statistical modeling (eg, regression) with
+# non-numeric (text/categorical) data, you'll want it stored as a Factor.
 
 # If we don't want non-numeric data stored as factors upon import, we
 # can set stringsAsFactors = FALSE, like this:
@@ -92,14 +96,13 @@ summary(forbes2)
 # In the second summary call, notice character data is not summarized like
 # Factors are in the first summary call.
 
-# "Which is better: character or Factor?" That's the wrong question. We should
-# ask "what's the difference?"
+# When do you use factor and when do you use character?
 
-# If you plan to run ANOVA or linear models, you need to store your text data as
-# Factors.
+# If you plan to run ANOVA or linear models that involves your text data, you
+# need to store your text data as Factors.
 
-# If you plan to manipulate or use patterns of character data, for say text
-# mining, you want to store your text data as character.
+# If you plan to manipulate or use patterns of character data, for data cleaning
+# or text mining, you want to store your text data as character.
 
 
 
@@ -109,13 +112,17 @@ summary(forbes2)
 # do?
 
 head(forbes)
+head(forbes, n = 3)
 tail(forbes)
+tail(forbes, n = 1)
+
 names(forbes)
 nrow(forbes)
 ncol(forbes)
 dim(forbes)
-pairs(forbes)
 
+# pairwise scatter plot
+plot(forbes)
 
 # Indexing brackets -------------------------------------------------------
 
@@ -154,14 +161,16 @@ forbes[1,-c(7,8)]
 # We can access columns of a data frame using $ as follows
 forbes$name
 
+# NOTE: try typing "forbes$" below this line and see what happens:
+forbes$name
+
 # First 10 cells of the name column
 forbes$name[1:10]
 
 # Notice we didn't need a comma because a vector only has one dimension.
 
 # YOUR TURN!
-# use the pairs() function on columns 5 - 8 of the forbes data:
-
+# use the plot() function on columns 5 - 8 of the forbes data:
 
 
 # Subsetting data ---------------------------------------------------------
@@ -181,6 +190,8 @@ forbes$sales > 100
 # Using the comparison inside brackets before the comma will return only rows
 # that are TRUE
 forbes[forbes$sales > 100,]
+
+# Notice I can't just do forbes[sales > 100,]; I have to say forbes$sales.
 
 # We can select certain columns if we like:
 forbes[forbes$sales > 100, c("name","sales")]
@@ -204,6 +215,7 @@ us.banks <- forbes[forbes$country=="United States" & forbes$category=="Banking",
 
 # Works with vectors too. Show all US companies with marketvalue greater than 200
 forbes$name[forbes$marketvalue > 200]
+forbes2$name[forbes$marketvalue > 200]
 
 # We can also subset our data using the subset() function. The syntax is 
 # subset(data, condition). Notice we don't have to keep typing "forbes" before
@@ -218,7 +230,6 @@ subset(forbes, sales > 100 & country != "United States", sales:marketvalue)
 subset(forbes, sales > 100 & country != "United States", c(name, category))
 
 # YOUR TURN! Select all non-United States companies in the Utilities category.
-
 
 
 # Some basic data manipulation --------------------------------------------
@@ -246,6 +257,7 @@ forbes$profitsI <- forbes$profits > 0
 forbes$totalcosts <- NULL
 forbes$logsales <- NULL
 forbes$profitsI <- NULL
+
 
 # (3) Recode a continuous variable into categories. 
 
@@ -319,11 +331,6 @@ sum(forbes$profits < 0)
 sum(forbes$profits < 0, na.rm = TRUE)
 mean(forbes$profits < 0, na.rm = TRUE)
 
-# We can also count up TRUE and FALSE with table
-table(forbes$sales > 5)
-table(forbes$profits < 0)
-
-# Notice table() ignores NAs by default.
 
 # YOUR TURN! 
 # What proportion of the Forbes 2000 list is from the United States?
@@ -340,11 +347,11 @@ table(forbes$profits < 0)
 # cross tab of categories vs. US/Non-US countries
 table(forbes$category, forbes$US)
 
-# can use with() function to temporarily "attach" data frame, which allows you
-# to reference column names directly without using the $.
+# can use with() function to temporarily allow you to reference column names
+# directly without using the $.
 with(forbes, table(category,US))
 
-# calculate percents with prop.table
+# calculate percents with the prop.table() function.
 
 # First we save the table object as CatTable
 CatTable <- with(forbes, table(category, US))
@@ -353,8 +360,8 @@ CatTable
 prop.table(CatTable, margin = 1) # rows proportions sum to 1
 prop.table(CatTable, margin = 2) # columns proportions sum to 1
 
-# For basic numeric summary stats use the aggregate() function.
-# syntax: aggregate(numeric ~ category, data, statistic)
+# For basic numeric summary stats we can use the aggregate() function.
+# syntax: aggregate(numeric ~ group, data, statistic)
 # NOTE: aggregate ignores missing data by default
 
 # median profits by category
@@ -374,7 +381,7 @@ aggregate(sales ~ US + category, forbes, mean)
 # aggregation.
 
 # total profits by country for companies with profits
-aggregate(profits ~ country, forbes, sum, subset= profits > 0)
+aggregate(profits ~ country, forbes, sum, subset = profits > 0)
 
 
 
@@ -392,7 +399,7 @@ plot(log(marketvalue) ~ log(assets), data=forbes)
 
 # Customize the labels
 plot(log(marketvalue) ~ log(assets), data=forbes, 
-     main="Market Value vs. Assets",
+     main = "Market Value vs. Assets",
      ylab = "Log Market Value",
      xlab = "Log Assets")
 
@@ -407,7 +414,7 @@ hist(log(forbes$marketvalue),prob=TRUE) # show probability densities
 hist(log(forbes$marketvalue),prob=TRUE, breaks=20) # more bins
 
 # boxplots
-# boxplot(numeric ~ category)
+# boxplot(numeric ~ group)
 boxplot(log(marketvalue) ~ salesCat, data=forbes, main="Log Market Value by Sales Category")
 
 # See Past StatLab Workshops for an Intro to R Graphics:
@@ -417,10 +424,14 @@ boxplot(log(marketvalue) ~ salesCat, data=forbes, main="Log Market Value by Sale
 
 # Packages ----------------------------------------------------------------
 
-# Come to R for the price, stay for the packages.
+# Packages are collections of functions and/or data created by other R users. 
+# You will certainly want to install some packages! The base R installation is
+# very lean. 
 
 # What packages are available?:
 # https://cran.r-project.org/web/packages/available_packages_by_name.html
+
+# To see what packages you have installed, click the Packages tab in RStudio.
 
 # To install a package in RStudio:
 
@@ -435,14 +446,14 @@ boxplot(log(marketvalue) ~ salesCat, data=forbes, main="Log Market Value by Sale
 # corrplot: Visualization of a correlation matrix
 install.packages("corrplot")
 
-# load the package; need to do this every time you want to use it
+# load the package; need to do this once per R session
 library(corrplot)
 
 # compute a correlation matrix of numeric forbes values;
 # The cor() function does this for us.
-# they are in columns 5 - 8, so use indexing notation to select;
-# need use="complete.obs" because of missing values in profit
-M <- cor(forbes[,5:8], use="complete.obs")
+# They are in columns 5 - 8, so use indexing notation to select;
+# need use="pairwise.complete.obs" because of missing values in profit
+M <- cor(forbes[,5:8], use="pairwise.complete.obs")
 M
 
 
@@ -456,13 +467,13 @@ corrplot(M, diag=FALSE, addCoef.col="black", type="lower")
 # A few packages to know about:
 # - haven (Import 'SPSS', 'Stata' and 'SAS' Files)
 # - readxl (Read Excel files)
-# - ggplot2 (data visualization)
 # - reshape2 (reshape data)
+# - tidyr (another package to reshape data)
 # - dplyr (data manipulation for data frames)
-# - lme4 (multilevel modeling)
-# - car (companion to applied regression)
 # - stringr (for working with character data)
 # - lubridate (for working with time and dates)
+# - ggplot2 (data visualization)
+# - data.table (Fast aggregation of large data)
 
 # Note: Packages often have dependencies. This means installing one package
 # will also install other packages it depends on. Example: installing
@@ -553,6 +564,8 @@ boxplot(log(sales) ~ US, data = forbes)
 
 
 # Analysis of Variance (ANOVA)
+
+# Let's use a data set that comes with R: iris.
 
 # Are the means between Sepal.Length different between the three species of
 # iris?

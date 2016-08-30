@@ -55,7 +55,7 @@ The goal: get you comfortable enough to help yourself go further with `R`.
 Two common ways to run functions:
 
 1. In the console at the command line; type the function and hit Enter
-2. In an `R` script; type one or more functions and hit Ctrl + Enter (Win) or Command + Enter (Mac)
+2. In an `R` script; type one or more functions, and run one or more of them by highlighting and hitting Ctrl + Enter (Win) or Command + Enter (Mac)
 
 An `R` script is a text file that contains all your `R` code. `R` scripts allow you to save, edit, reproduce and share your code.   
 \ 
@@ -77,16 +77,6 @@ Today's workshop will be centered around an `R` script I wrote in advance.
 `summary(scores)` 
 
 * **Note**: Use `Alt + -` (Win) or `Option + -` (Mac) in RStudio to quickly insert ` <- `. You can also use `=` for assignment.
-
-## `R` basics - objects
-
-- In `R` we create and manipulate *objects*. Examples of objects are vectors, matrices, data frames and lists. You can create as many objects as memory allows. 
-
-- On the previous slide we created a data frame object called `scores`:
-
-```
-scores <- read.csv(file="scores.csv")
-```
 
 
 ## `R` basics - packages
@@ -114,7 +104,7 @@ scores <- read.csv(file="scores.csv")
 
 ## Keep Going!
 
-- Join the UVa`R`Users Group: http://www.meetup.com/UVa-R-Users-Group/
+- Join the UVa `R` Users Group: http://www.meetup.com/UVa-R-Users-Group/
 
 - Sign up for the R-Bloggers daily email: http://www.r-bloggers.com/
 
@@ -134,9 +124,9 @@ scores <- read.csv(file="scores.csv")
 
 - R-statistics blog: http://www.r-statistics.com/
 
-- The`R`Journal: http://journal.r-project.org/
+- The `R` Journal: http://journal.r-project.org/
 
-- UCLA`R`Starter Kit: http://www.ats.ucla.edu/stat/r/sk/
+- UCLA `R` Starter Kit: http://www.ats.ucla.edu/stat/r/sk/
 
 
 ## StatLab
