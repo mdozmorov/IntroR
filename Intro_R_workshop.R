@@ -1,5 +1,5 @@
 # Introduction to R workshop
-# Fall 2016
+# Spring 2017
 # UVa StatLab
 # Clay Ford
 
@@ -19,8 +19,12 @@
 # workshop files.
 
 # To set working directory via point-and-click:
-# Session...Set Working Directory...Choose Directory
+# (1) Session...Set Working Directory...Choose Directory
 # Or Ctrl + Shift + H
+
+# (2) Use the Files tab. Naviagte to folder and select "Set As Working
+# Directory" under More
+
 
 # To set working directory with R code:
 # use setwd() function; path must be in quotes
@@ -30,7 +34,6 @@
 
 # Start with "/" to start from your root directory. 
 # Start with "~/" to start from your home directory.
-
 
 
 # Loading data ------------------------------------------------------------
@@ -45,6 +48,7 @@
 # Today we'll import a CSV file.
 
 # Data: Forbes 2000 list from 2004 
+# File name: Forbes2000.csv
 # source: Handbook of Statistical Analysis Using R (Everitt & Hothorn)
 # amounts are in billion US dollars
     
@@ -63,10 +67,10 @@ forbes <- read.csv("http://people.virginia.edu/~jcf2d/data/Forbes2000.csv")
 # on "Import Dataset", select "From Local File...", and navigate to file.
 
 
-
 # Inspecting Data ---------------------------------------------------------
 
-# Click on "forbes" in the environment window to browse the data.
+# Click on "forbes" in the environment window to browse the data. You can only
+# browse the data. You cannot edit.
 
 # view structure of data
 str(forbes)
@@ -84,6 +88,7 @@ str(forbes)
 
 # If we don't want non-numeric data stored as factors upon import, we
 # can set stringsAsFactors = FALSE, like this:
+
 forbes2 <- read.csv("Forbes2000.csv", stringsAsFactors = FALSE)
 str(forbes2)
 # Notice the non-numeric columns are simply character now.
@@ -121,56 +126,6 @@ nrow(forbes)
 ncol(forbes)
 dim(forbes)
 
-# pairwise scatter plot
-plot(forbes)
-
-# Indexing brackets -------------------------------------------------------
-
-# R keeps data out of sight. If we want to see or use our data, we have to tell 
-# it what parts we want to see or use. While this can seem counterintuitive at 
-# first, it allows us focus on the data we're interested in and cut down on
-# distractions.
-
-# We can use indexing brackets to select portions of data frame:
-# [row number(s),column number(s)/name(s)]
-
-# show first 6 records of first 2 columns
-# 1:6 = 1,2,3,4,5,6
-forbes[1:6,1:2] 
-
-# first six rows; nothing after the comma means "show all columns"
-forbes[1:6,] 
-
-# columns 2 and 3
-forbes[,2:3] 
-
-# rows 10 and 11, columns 2, 4, and 6
-forbes[c(10,11),c(2,4,6)]
-
-# Note: c(10,11) and c(2,4,6) are "vectors"; The c() function means "combine"
-
-# can also use column names
-forbes[1:6,c("name","category")]
-
-# first 5 records and all but first column (rank)
-forbes[1:5,-1]
-
-# first record and all but last two columns (assets and marketvalue)
-forbes[1,-c(7,8)]
-
-# We can access columns of a data frame using $ as follows
-forbes$name
-
-# NOTE: try typing "forbes$" below this line and see what happens:
-forbes$name
-
-# First 10 cells of the name column
-forbes$name[1:10]
-
-# Notice we didn't need a comma because a vector only has one dimension.
-
-# YOUR TURN!
-# use the plot() function on columns 5 - 8 of the forbes data:
 
 
 # Subsetting data ---------------------------------------------------------
@@ -179,49 +134,17 @@ forbes$name[1:10]
 # companies had sales over 100 billion? Which companies are from Canada? Which
 # Banking companies are from the United States?
 
-# We can define conditions in our indexing brackets such that only rows where
-# the condition is TRUE are shown.
+# We can subset our data using the subset() function. The syntax is subset(data,
+# condition). Notice we don't have to keep typing "forbes" before each column
+# name.
 
-# TASK: Show companies with sales greater than 100 billion.
-
-# This comparison returns TRUE/FALSE
-forbes$sales > 100
-
-# Using the comparison inside brackets before the comma will return only rows
-# that are TRUE
-forbes[forbes$sales > 100,]
-
-# Notice I can't just do forbes[sales > 100,]; I have to say forbes$sales.
-
-# We can select certain columns if we like:
-forbes[forbes$sales > 100, c("name","sales")]
-
-# More examples:
-
+# Show companies with sales greater than 100 billion:
+subset(forbes, sales > 100)
 
 # Show all Canadian countries:
-
-# Show rows where country is equal to Canada. Notice the double equals ("==")
-forbes[forbes$country=="Canada",]
-
-
-# Show all Banking companies in the United States
-
-# Show rows where country equals United States & industry equals Banking.
-forbes[forbes$country=="United States" & forbes$category=="Banking",]
-
-# We can save these subsets of data for future analysis:
-us.banks <- forbes[forbes$country=="United States" & forbes$category=="Banking",]
-
-# Works with vectors too. Show all US companies with marketvalue greater than 200
-forbes$name[forbes$marketvalue > 200]
-forbes2$name[forbes$marketvalue > 200]
-
-# We can also subset our data using the subset() function. The syntax is 
-# subset(data, condition). Notice we don't have to keep typing "forbes" before
-# each column name.
-subset(forbes, sales > 100)
 subset(forbes, country == "Canada")
+
+# Show Banking companies in the United States:
 subset(forbes, country == "United States" & category == "Banking")
 
 # We can also select certain columns. For example:
@@ -229,12 +152,15 @@ subset(forbes, sales > 100, c(name, sales))
 subset(forbes, sales > 100 & country != "United States", sales:marketvalue)
 subset(forbes, sales > 100 & country != "United States", c(name, category))
 
+# We can always save our subsetted data as a new object:
+USbanks <- subset(forbes, country == "United States" & category == "Banking")
+
 # YOUR TURN! Select all non-United States companies in the Utilities category.
 
 
 # Some basic data manipulation --------------------------------------------
 
-# Three common data manipulation tasks:
+# Four common data manipulation tasks:
 
 # (1) Deriving new columns (or variables)
 
@@ -248,18 +174,24 @@ forbes$logsales <- log(forbes$sales)
 # syntax: ifelse(condition, action if TRUE, action if FALSE)
 forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
 
-# Create a column of TRUE/FALSE based on whether profits are positive
-forbes$profitsI <- forbes$profits > 0
+
+# (2) changing a variable from Factor to character
+
+is.factor(forbes$name) 
+is.character(forbes$name)
+
+# save the name column as character
+forbes$name <- as.character(forbes$name)
 
 
-# (2) dropping columns (variables)
+# (3) dropping columns (variables)
 
 forbes$totalcosts <- NULL
 forbes$logsales <- NULL
 forbes$profitsI <- NULL
 
 
-# (3) Recode a continuous variable into categories. 
+# (4) Recode a continuous variable into categories. 
 
 # Here we recode sales into four categories: (0,5], (5,10], (10,100], (100,500]
 # using the cut() function
@@ -275,6 +207,7 @@ summary(forbes$salesCat)
 # billions. (ie, multiply by 1000)
 
 
+
 # Basic summary stats -----------------------------------------------------
 
 # The summary function is nice for quickly generating summaries of all columns,
@@ -285,11 +218,6 @@ summary(forbes$salesCat)
 table(forbes$category) # factor
 table(forbes2$category) # character
 
-# sort category count in increasing or decreasing order
-sort(table(forbes$category))
-sort(table(forbes$category), decreasing = TRUE)
-# Top 5
-sort(table(forbes$category), decreasing = TRUE)[1:5]
 
 # summarize numeric columns
 mean(forbes$sales)
@@ -336,7 +264,6 @@ mean(forbes$profits < 0, na.rm = TRUE)
 # What proportion of the Forbes 2000 list is from the United States?
 
 
-
 # Aggregating and Summarizing Data ----------------------------------------
 
 # Descriptive Statistics such as contingency tables and summary stats
@@ -370,9 +297,6 @@ aggregate(profits ~ category, data=forbes, median)
 # mean sales by country
 aggregate(sales ~ country, forbes, mean)
 
-# total profits by country
-aggregate(profits ~ country, forbes, sum)
-
 # mean sales by US/Not US and category
 aggregate(sales ~ US + category, forbes, mean)
 
@@ -389,7 +313,6 @@ aggregate(profits ~ country, forbes, sum, subset = profits > 0)
 
 # scatter plots
 plot(x = forbes$assets, y = forbes$marketvalue)
-with(forbes, plot(assets,marketvalue))
 
 # same with formula interface: y ~ x
 plot(marketvalue ~ assets, data=forbes)
@@ -415,7 +338,8 @@ hist(log(forbes$marketvalue),prob=TRUE, breaks=20) # more bins
 
 # boxplots
 # boxplot(numeric ~ group)
-boxplot(log(marketvalue) ~ salesCat, data=forbes, main="Log Market Value by Sales Category")
+boxplot(log(marketvalue) ~ salesCat, data=forbes, 
+        main="Log Market Value by Sales Category")
 
 # See Past StatLab Workshops for an Intro to R Graphics:
 # http://data.library.virginia.edu/workshops/past-workshops/
@@ -429,7 +353,7 @@ boxplot(log(marketvalue) ~ salesCat, data=forbes, main="Log Market Value by Sale
 # very lean. 
 
 # What packages are available?:
-# https://cran.r-project.org/web/packages/available_packages_by_name.html
+# https://cran.r-project.org/web/packages/
 
 # To see what packages you have installed, click the Packages tab in RStudio.
 
@@ -441,28 +365,41 @@ boxplot(log(marketvalue) ~ salesCat, data=forbes, main="Log Market Value by Sale
 
 # or use the install.packages function
 
-# packages only need to be installed once
+# Packages only need to be installed once, though they occasionally need to be 
+# updated. Click the Update button on the Packages tab to see which packages 
+# have available updates.
 
-# corrplot: Visualization of a correlation matrix
-install.packages("corrplot")
+# Note: Packages often have dependencies. This means installing one package
+# will also install other packages it depends on. 
+
+# ggplot2: Data Visualisation Using the Grammar of Graphics
+install.packages("ggplot2")
+
+# If you're installing this for the first time, this will install about 10 other
+# packages ggplot2 depends on. 
 
 # load the package; need to do this once per R session
-library(corrplot)
+library(ggplot2)
 
-# compute a correlation matrix of numeric forbes values;
-# The cor() function does this for us.
-# They are in columns 5 - 8, so use indexing notation to select;
-# need use="pairwise.complete.obs" because of missing values in profit
-M <- cor(forbes[,5:8], use="pairwise.complete.obs")
-M
+# scatter plot
+ggplot(forbes, aes(x = log(assets), y = log(marketvalue))) + geom_point()
 
+# scatter plot with dots colored by US
+ggplot(forbes, aes(x = log(assets), y = log(marketvalue), color = US)) + 
+  geom_point()
 
-# now use corrplot function to visualize
-corrplot(M)
-corrplot(M, diag=FALSE, addCoef.col="black")
-corrplot(M, diag=FALSE, addCoef.col="black", type="lower")
+# scatter plot with dots colored by US and smooth trend lines
+ggplot(forbes, aes(x = log(assets), y = log(marketvalue), color = US)) + 
+  geom_point() +
+  geom_smooth() +
+  labs(x = "Log Assets", y = "Log Market Value", title = "Market Value vs Assets")
 
-# See ?corrplot for many more examples
+# Histogram
+ggplot(forbes, aes(x = marketvalue)) + geom_histogram()
+ggplot(forbes, aes(x = log(marketvalue))) + geom_histogram(binwidth = 0.5)
+
+# Boxplot
+ggplot(forbes, aes(x = salesCat, y = log(marketvalue))) + geom_boxplot()
 
 # A few packages to know about:
 # - haven (Import 'SPSS', 'Stata' and 'SAS' Files)
@@ -472,24 +409,19 @@ corrplot(M, diag=FALSE, addCoef.col="black", type="lower")
 # - dplyr (data manipulation for data frames)
 # - stringr (for working with character data)
 # - lubridate (for working with time and dates)
-# - ggplot2 (data visualization)
 # - data.table (Fast aggregation of large data)
 
-# Note: Packages often have dependencies. This means installing one package
-# will also install other packages it depends on. Example: installing
-# ggplot2 package will install 9 other packages it uses.
 
 
-
-# statisical analysis examples --------------------------------------------
+# Basic statistics examples -----------------------------------------------
 
 # basic linear regression
 
 # recall this plot
-plot(log(marketvalue) ~ log(assets), data=forbes)
+plot(log(marketvalue) ~ log(assets), data=forbes) 
 
-# Is there a relationship between assets and market value? Can we summarize it
-# with a straight line? 
+# Can we summarize the relationship between assets and market value with a
+# straight line?
 
 # We can fit a linear model using the lm function (ie, regression)
 # lm(response ~ independent variables)
@@ -500,21 +432,13 @@ mod <- lm(log(marketvalue) ~ log(assets), data=forbes)
 # summary of the model
 summary(mod) 
 
-# interpreting slope when both variables log transformed: a 1% increase in
-# assets yields about a 0.4% in marketvalue (among the Forbes 2000)
+# interpreting slope when both variables log transformed: a 1% increase in 
+# assets is associated with about a 0.4% in marketvalue (among the Forbes 2000)
 
 # add fitted line using abline()
 abline(mod, col="blue")
 
-# Another way to add a line:
-# add fitted line using lines() function; just like plotting x-y values in
-# algebra class. The lines() function adds lines to an existing plot.
-plot(log(marketvalue) ~ log(assets), data=forbes, col="gray")
-lines(x = sort(log(forbes$assets)), y = sort(fitted(mod)), col = "blue")
-
-
-# Want to learn more? See the Linear Modeling in R workshop:
-# http://static.lib.virginia.edu/statlab/materials/workshops/LinearModelingR.zip
+# remove the model object
 rm(mod)
 
 
@@ -583,6 +507,40 @@ summary(aov.out)
 
 # Stuff I'm not sure we'll have time for but you might like to review in your
 # free time.
+
+
+# Indexing brackets -------------------------------------------------------
+
+# R keeps data out of sight. If we want to see or use our data, we have to tell 
+# it what parts we want to see or use. While this can seem counterintuitive at 
+# first, it allows us focus on the data we're interested in and cut down on
+# distractions.
+
+# We can use indexing brackets to select portions of data frame:
+# [row number(s),column number(s)/name(s)]
+
+# show first 6 records of first 2 columns
+# 1:6 = 1,2,3,4,5,6
+forbes[1:6,1:2] 
+
+# first six rows; nothing after the comma means "show all columns"
+forbes[1:6,] 
+
+# columns 2 and 3; nothing before the comma means "show all rows"
+forbes[,2:3] 
+
+# can also use column names; they need to be entered as a "vector"
+forbes[1:6,c("name","category")]
+
+# c("name","category") creates a "vector"; the c() function means "combine"
+
+# We can access columns of a data frame using $ as follows
+forbes$name
+
+# First 10 cells of the name column
+forbes$name[1:10]
+
+# Notice we didn't need a comma because the column only has one dimension.
 
 
 # Missing data ------------------------------------------------------------
@@ -670,46 +628,34 @@ rm(m,pop,x)
 
 # function and programming example ----------------------------------------
 
-
 # use the function function to write your own functions!
 
-# function that calls str(), summary() and head() on data frame
-# and lists row numbers with missing data (if any)
-# syntax: function(argument(s))
-mydata <- function(x){
-  print("### STRUCTURE OF DATA FRAME ###")
-  print(str(x))
-  print("### SUMMARY OF DATA FRAME ###")
-  print(summary(x))
-  print("### FIRST 6 RECORDS ###")
-  print(head(x))
-  print("### RECORDS WITH MISSING DATA ###")
-  if(all(complete.cases(x))==TRUE) print("No records with missing data")
-  else print(which(complete.cases(x)==FALSE))
-}
-mydata(forbes) # try function on the forbes data frame
+# Simple function: calculate the area of a circle:
+# A = pi*r^2
+# pi is a keyword in R that returns a good approximation for pi
 
-# a function that tells you if x is evenly divisible by y
-# It takes two arguments: x and y
-divisible <- function(x,y){
-  
-  # error check; return a special message
-  if (is.numeric(c(x,y))==FALSE) 
-    stop("please enter numbers")
-  
-  if (x %% y == 0){
-    print("yes")
-  } else {
-    print("no")
+# The arguments to the funtion() function are the arguments we want our function
+# to have. Below we want an argument for radius, which we call r.
+
+# submit the function code:
+areaCirc <- function(r) pi * r^2
+
+# Now the function is ready to use:
+areaCirc(r = 5)
+areaCirc(r = 2)
+
+# calculate area circles with radii 2 - 9
+areaCirc(r = 2:9)
+
+# Another example: coefficient of variation (CV)
+# The ratio of the standard deviation to the mean
+# It shows the extent of variability in relation to the mean of the population
+
+cv <- function(x){
+  ratio <- sd(x)/mean(x)
+  cat("The coefficient of variation is", ratio)
   }
-}
 
-# test function
-divisible(245,23)
-divisible(245,"r")
-
-n1 <- 1605
-n2 <- 3
-divisible(n1,n2)
-rm(n1,n2)
-
+# use on the forbes data
+cv(forbes$marketvalue)
+cv(log(forbes$marketvalue))

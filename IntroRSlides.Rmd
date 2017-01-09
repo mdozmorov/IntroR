@@ -72,7 +72,7 @@ Today's workshop will be centered around an `R` script I wrote in advance.
 
 `scores <- read.csv(file="scores.csv")`   
  
-* Now we can use `scores` as an argument to other functions. For example, computes summaries for each column in the data:
+* Now we can use `scores` as an argument to other functions. For example, compute summary statistics for each column in the data:
 
 `summary(scores)` 
 
@@ -81,7 +81,7 @@ Today's workshop will be centered around an `R` script I wrote in advance.
 
 ## `R` basics - packages
 
-- All functions belong to *packages*. `R` comes with about 30 packages (sometimes called "base `R`"), but as of August 2016, there are *over 8700* user-contributed packages! 
+- All functions belong to *packages*. `R` comes with about 30 packages (sometimes called "base `R`"), but as of January 2017, there are *over 9800* user-contributed packages! 
 
 - Example: `ggplot2` is a popular package that adds functions for creating graphs in a different way than what base `R` provides
 
@@ -110,6 +110,8 @@ Today's workshop will be centered around an `R` script I wrote in advance.
 
 - Lander, J., *R for Everyone*, Addison-Wesley, 2014.
 
+- Kabacoff, R., *R in Action*, Manning, 2015.
+
 - Teetor, P., *R Cookbook*, O'Reilly, 2011.
 
 - Hothorn, T. & Everitt, B., *A Handbook of Statistical Analyses Using R*, CRC Press, 2009.
@@ -120,7 +122,7 @@ Today's workshop will be centered around an `R` script I wrote in advance.
 
 - Quick-R: http://www.statmethods.net/
 
-- Cookbook for R: http://www.cookbook-r.com/
+- Cookbook for `R`: http://www.cookbook-r.com/
 
 - R-statistics blog: http://www.r-statistics.com/
 
@@ -129,16 +131,11 @@ Today's workshop will be centered around an `R` script I wrote in advance.
 - UCLA `R` Starter Kit: http://www.ats.ucla.edu/stat/r/sk/
 
 
-## StatLab
+## Thanks for coming today! 
 
-Thanks for coming today!  
-\ 
+- For help and advice with your data analysis, contact us: statlab@virginia.edu
 
-For help and advice with your data analysis, contact us: statlab@virginia.edu  
-\ 
-
-Sign up for more workshops or see past workshops:
+- Sign up for more workshops or see past workshops:
 http://data.library.virginia.edu/training/   
-\ 
 
-Register for the Research Data Services newsletter to be notified of future workshops: http://data.library.virginia.edu/newsletters/
+- Register for the Research Data Services newsletter to be notified of future workshops: http://data.library.virginia.edu/newsletters/
