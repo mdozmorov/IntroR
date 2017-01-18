@@ -66,6 +66,9 @@ forbes <- read.csv("http://people.virginia.edu/~jcf2d/data/Forbes2000.csv")
 # (3) use the RStudio "Import Dataset" button in the Environment window. Click
 # on "Import Dataset", select "From Local File...", and navigate to file.
 
+# NOTE: if you do (3), please name your data "forbes", or else the rest of the R
+# code will not work.
+
 
 # Inspecting Data ---------------------------------------------------------
 
@@ -126,6 +129,11 @@ nrow(forbes)
 ncol(forbes)
 dim(forbes)
 
+# To access or view just the column of a data frame, use a dollar sign after the
+# name of the data frame
+forbes$name
+
+# Try typing forbes$ below and see what RStudio does for you.
 
 
 # Subsetting data ---------------------------------------------------------
@@ -135,22 +143,21 @@ dim(forbes)
 # Banking companies are from the United States?
 
 # We can subset our data using the subset() function. The syntax is subset(data,
-# condition). Notice we don't have to keep typing "forbes" before each column
-# name.
+# condition). 
 
 # Show companies with sales greater than 100 billion:
 subset(forbes, sales > 100)
 
-# Show all Canadian countries:
+# Show all Canadian countries: (notice we use two equal signs)
 subset(forbes, country == "Canada")
 
-# Show Banking companies in the United States:
+# Show Banking companies in the United States: (use & for AND, use | for OR)
 subset(forbes, country == "United States" & category == "Banking")
 
 # We can also select certain columns. For example:
 subset(forbes, sales > 100, c(name, sales))
 subset(forbes, sales > 100 & country != "United States", sales:marketvalue)
-subset(forbes, sales > 100 & country != "United States", c(name, category))
+subset(forbes, sales > 100 & country != "United States", name:category)
 
 # We can always save our subsetted data as a new object:
 USbanks <- subset(forbes, country == "United States" & category == "Banking")
@@ -180,7 +187,7 @@ forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
 is.factor(forbes$name) 
 is.character(forbes$name)
 
-# save the name column as character
+# Convert name column to character using as.character
 forbes$name <- as.character(forbes$name)
 
 
@@ -188,7 +195,6 @@ forbes$name <- as.character(forbes$name)
 
 forbes$totalcosts <- NULL
 forbes$logsales <- NULL
-forbes$profitsI <- NULL
 
 
 # (4) Recode a continuous variable into categories. 
@@ -224,7 +230,7 @@ mean(forbes$sales)
 mean(forbes$profits) # NA?
 
 # By default R returns NA (not available) for certain calculations if there is
-# any missing data. Usa na.rm=TRUE to override:
+# any missing data. Use na.rm=TRUE to override:
 mean(forbes$profits, na.rm = TRUE)
 
 # How many missing?
@@ -250,6 +256,7 @@ forbes$sales > 5
 sum(forbes$sales > 5)
 
 # Percent of Forbes 2000 with sales over 5 billion:
+# Taking the mean of 0,1 data returns percent of 1's
 mean(forbes$sales > 5)
 
 # How many companies had negative profits?
@@ -274,14 +281,10 @@ mean(forbes$profits < 0, na.rm = TRUE)
 # cross tab of categories vs. US/Non-US countries
 table(forbes$category, forbes$US)
 
-# can use with() function to temporarily allow you to reference column names
-# directly without using the $.
-with(forbes, table(category,US))
-
 # calculate percents with the prop.table() function.
 
 # First we save the table object as CatTable
-CatTable <- with(forbes, table(category, US))
+CatTable <- table(forbes$category, forbes$US)
 CatTable
 
 prop.table(CatTable, margin = 1) # rows proportions sum to 1
@@ -304,9 +307,12 @@ aggregate(sales ~ US + category, forbes, mean)
 # aggregate also provides a subset argument that allows us to subset data before
 # aggregation.
 
-# total profits by country for companies with profits
-aggregate(profits ~ country, forbes, sum, subset = profits > 0)
+# total profits by country for banking companies
+aggregate(profits ~ country, forbes, sum, subset = category == "Banking")
 
+
+# YOUR TURN!
+# Find total assets by category for US companies
 
 
 # Simple Graphics ---------------------------------------------------------
@@ -336,12 +342,14 @@ hist(log(forbes$marketvalue)) # more symmetric
 hist(log(forbes$marketvalue),prob=TRUE) # show probability densities
 hist(log(forbes$marketvalue),prob=TRUE, breaks=20) # more bins
 
+
 # boxplots
 # boxplot(numeric ~ group)
 boxplot(log(marketvalue) ~ salesCat, data=forbes, 
         main="Log Market Value by Sales Category")
 
-# See Past StatLab Workshops for an Intro to R Graphics:
+# See Past and Upcoming Workshops for more on R Graphics:
+# http://data.library.virginia.edu/training/
 # http://data.library.virginia.edu/workshops/past-workshops/
 
 
@@ -349,8 +357,7 @@ boxplot(log(marketvalue) ~ salesCat, data=forbes,
 # Packages ----------------------------------------------------------------
 
 # Packages are collections of functions and/or data created by other R users. 
-# You will certainly want to install some packages! The base R installation is
-# very lean. 
+# You will certainly want to install some packages! 
 
 # What packages are available?:
 # https://cran.r-project.org/web/packages/
@@ -372,44 +379,45 @@ boxplot(log(marketvalue) ~ salesCat, data=forbes,
 # Note: Packages often have dependencies. This means installing one package
 # will also install other packages it depends on. 
 
-# ggplot2: Data Visualisation Using the Grammar of Graphics
+# The ggplot2 package 
+
+# a package that allows you to create plots using the Grammar of Graphics.
+
+# Only install once. It will likely install several other packages it depends on.
 install.packages("ggplot2")
 
-# If you're installing this for the first time, this will install about 10 other
-# packages ggplot2 depends on. 
-
-# load the package; need to do this once per R session
+# Load the package. Need to do once per R session if you want to use it.
 library(ggplot2)
 
-# scatter plot
-ggplot(forbes, aes(x = log(assets), y = log(marketvalue))) + geom_point()
 
-# scatter plot with dots colored by US
+# ggplot2 examples - scatterplots
+
+ggplot(forbes, aes(x = log(assets), y = log(marketvalue))) + 
+  geom_point()
+
 ggplot(forbes, aes(x = log(assets), y = log(marketvalue), color = US)) + 
   geom_point()
 
-# scatter plot with dots colored by US and smooth trend lines
 ggplot(forbes, aes(x = log(assets), y = log(marketvalue), color = US)) + 
   geom_point() +
-  geom_smooth() +
-  labs(x = "Log Assets", y = "Log Market Value", title = "Market Value vs Assets")
+  geom_smooth()
 
-# Histogram
-ggplot(forbes, aes(x = marketvalue)) + geom_histogram()
-ggplot(forbes, aes(x = log(marketvalue))) + geom_histogram(binwidth = 0.5)
+ggplot(forbes, aes(x = log(assets), y = log(marketvalue), color = US)) + 
+  geom_point(alpha = 0.5) +
+  geom_smooth(se=FALSE)
 
-# Boxplot
-ggplot(forbes, aes(x = salesCat, y = log(marketvalue))) + geom_boxplot()
+# See Help...Cheatsheets...Data Visualization with ggplot2 for a cheatsheet of
+# ggplot2 commands.
 
-# A few packages to know about:
+# A few other packages to know about:
 # - haven (Import 'SPSS', 'Stata' and 'SAS' Files)
 # - readxl (Read Excel files)
 # - reshape2 (reshape data)
 # - tidyr (another package to reshape data)
-# - dplyr (data manipulation for data frames)
 # - stringr (for working with character data)
 # - lubridate (for working with time and dates)
 # - data.table (Fast aggregation of large data)
+# - dplyr (a grammar of data manipulation)
 
 
 
@@ -417,26 +425,37 @@ ggplot(forbes, aes(x = salesCat, y = log(marketvalue))) + geom_boxplot()
 
 # basic linear regression
 
-# recall this plot
-plot(log(marketvalue) ~ log(assets), data=forbes) 
+# let's look at marketvalue vs profits
+ggplot(forbes, aes(x = profits, y = marketvalue)) + 
+  geom_point() +
+  geom_smooth()
 
-# Can we summarize the relationship between assets and market value with a
+# look at just positive profits
+ggplot(subset(forbes, profits > 0), aes(x = profits, y = marketvalue)) + 
+  geom_point() +
+  geom_smooth() 
+
+# Can we summarize the relationship between profits and market value with a
 # straight line?
 
 # We can fit a linear model using the lm function (ie, regression)
 # lm(response ~ independent variables)
-lm(log(marketvalue) ~ log(assets), data=forbes) 
+lm(marketvalue ~ profits, data=forbes, subset = profits > 0) 
 
 # save the model (ie, create a model object) and view a summary:
-mod <- lm(log(marketvalue) ~ log(assets), data=forbes) 
+mod <- lm(marketvalue ~ profits, data=forbes, subset = profits > 0) 
 # summary of the model
 summary(mod) 
 
-# interpreting slope when both variables log transformed: a 1% increase in 
-# assets is associated with about a 0.4% in marketvalue (among the Forbes 2000)
+# Naive interpretation: Every additional 1 billion in profits is associated with
+# an increase of about 17 billion in additional marketvalue
 
-# add fitted line using abline()
-abline(mod, col="blue")
+# This is just a simple demonstration. We should check model assumptions, make
+# sure no points are overly influential, etc. And maybe consult with an
+# economist. :)
+
+# To learn more, see my past workshop Linear Modeling with R 
+# http://data.library.virginia.edu/statlab/past-workshops/
 
 # remove the model object
 rm(mod)
@@ -456,13 +475,18 @@ colnames(table_2.5) <- c("Dem","Ind","Rep")
 rownames(table_2.5) <- c("Females","Males")
 table_2.5
 
-# Null Hypothesis: no association between gender and political party
+# Null Hypothesis: no association between gender and political affiliation
 chisq.test(table_2.5)
+# save test into an object called "results"
 results <- chisq.test(table_2.5)
-str(results) # more than meets the eye! A list object.
+str(results) # A list object
 results$statistic
 results$p.value
-results$residuals
+results$stdres # standardized residuals
+
+# To learn more, see my past workshop
+# Introductory Categorical Data Analysis in R
+# http://data.library.virginia.edu/statlab/past-workshops/
 
 rm(table_2.5, results)
 
@@ -475,16 +499,19 @@ aggregate(sales ~ US, data = forbes, mean)
 
 # An assumption is the populations from which the samples have been drawn should
 # be normal. They don't look normal:
-hist(forbes$sales[forbes$US=="US"])
-hist(forbes$sales[forbes$US!="US"])
+ggplot(forbes, aes(x = sales, fill = US)) + geom_histogram() 
 
 # We may want to work with the log transformed data
-hist(log(forbes$sales[forbes$US=="US"]))
-hist(log(forbes$sales[forbes$US!="US"]))
+# stacked histograms
+ggplot(forbes, aes(x = log(sales), fill = US)) + geom_histogram() 
+# overlayed histograms
+ggplot(forbes, aes(x = log(sales), fill = US)) + 
+  geom_histogram(position = "identity", alpha = 0.7) 
 
-# Now perform the t-test on the log transformed data
+# Perform the t-test on the log transformed data
 t.test(log(sales) ~ US, data = forbes)
-boxplot(log(sales) ~ US, data = forbes)
+ggplot(forbes, aes(x = US, y = log(sales))) + 
+  geom_boxplot() 
 
 
 # Analysis of Variance (ANOVA)

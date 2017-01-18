@@ -1,7 +1,7 @@
 ---
 title: "Introduction to `R`"
 author: "Clay Ford"
-date: "Fall 2016"
+date: "Spring 2017"
 output: beamer_presentation
 ---
 
@@ -11,7 +11,7 @@ options(width = 50)
 
 ## Today's workshop
 
-Teach you how to use R to:
+Demonstrate the following in `R`:
 
 - read in and manipulate tabular data
 - do some basic statistics
@@ -27,7 +27,7 @@ The goal: get you comfortable enough to help yourself go further with `R`.
 
 - I recommend you use `R` with the free RStudio IDE (Interactive Development Environment).
 
-- RStudio makes it easier to learn and use R.
+- RStudio makes it easier to learn and use `R`.
 
 - It does things like autocomplete, syntax highlighting, and much more.
 
@@ -39,14 +39,12 @@ The goal: get you comfortable enough to help yourself go further with `R`.
 
 * `R` uses *functions* to do things.
 
-* Functions take *arguments* to specify how to do those things. Examples:
+* Functions take *arguments* to specify how, or to what, to do those things. Example:
 
     + `read.csv(file="scores.csv")` 
-    + `plot(x = scores$SAT, y = scores$GPA)`
 
 * `read.csv` is a function to import a CSV file; `file` is an argument that specifies which file to import.
 
-* `plot` is a function that creates a graph; `x` and `y` are arguments that specify what to plot on the x and y axes, respectively.
 
 
 
@@ -54,7 +52,7 @@ The goal: get you comfortable enough to help yourself go further with `R`.
 
 Two common ways to run functions:
 
-1. In the console at the command line; type the function and hit Enter
+1. From the command line; type the function and hit Enter
 2. In an `R` script; type one or more functions, and run one or more of them by highlighting and hitting Ctrl + Enter (Win) or Command + Enter (Mac)
 
 An `R` script is a text file that contains all your `R` code. `R` scripts allow you to save, edit, reproduce and share your code.   
@@ -81,7 +79,9 @@ Today's workshop will be centered around an `R` script I wrote in advance.
 
 ## `R` basics - packages
 
-- All functions belong to *packages*. `R` comes with about 30 packages (sometimes called "base `R`"), but as of January 2017, there are *over 9800* user-contributed packages! 
+- All functions belong to *packages*. The `read.csv` function is in the `utils` package.
+
+- `R` comes with about 30 packages (called "base `R`"), but as of January 2017 there are close to 10,000 user-contributed packages! 
 
 - Example: `ggplot2` is a popular package that adds functions for creating graphs in a different way than what base `R` provides
 
