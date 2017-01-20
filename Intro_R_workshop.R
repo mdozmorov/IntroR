@@ -66,8 +66,9 @@ forbes <- read.csv("http://people.virginia.edu/~jcf2d/data/Forbes2000.csv")
 # (3) use the RStudio "Import Dataset" button in the Environment window. Click
 # on "Import Dataset", select "From Local File...", and navigate to file.
 
-# NOTE: if you do (3), please name your data "forbes", or else the rest of the R
-# code will not work.
+# REQUEST: Please don't do (3) during the workshop. It imports csv files 
+# slightly differently than the read.csv function. I explain in the next
+# section.
 
 
 # Inspecting Data ---------------------------------------------------------
@@ -84,9 +85,9 @@ str(forbes)
 # Notice the non-numeric data is "Factor". This basically means a categorical 
 # variable. "Factor w/ 57 levels" for country means there are 57 unique 
 # countries in this data. But notice the numbers. Factors are actually stored as
-# integers, and the integers have associated "levels".
+# integers, and the integers have associated "labels".
 
-# If you plan to do any statistical modeling (eg, regression) with
+# If you plan to do any statistical modeling (eg, regression or ANOVA) with 
 # non-numeric (text/categorical) data, you'll want it stored as a Factor.
 
 # If we don't want non-numeric data stored as factors upon import, we
@@ -94,7 +95,9 @@ str(forbes)
 
 forbes2 <- read.csv("Forbes2000.csv", stringsAsFactors = FALSE)
 str(forbes2)
-# Notice the non-numeric columns are simply character now.
+
+# Notice the non-numeric columns are simply character now. This is what the 
+# Import Dataset button does that we discussed in the previous section.
 
 # Let's call the summary function on both data frames. When called on data
 # frames, the summary function returns a summary for each column.
@@ -131,7 +134,8 @@ dim(forbes)
 
 # To access or view just the column of a data frame, use a dollar sign after the
 # name of the data frame
-forbes$name
+forbes$sales
+head(forbes$sales)
 
 # Try typing forbes$ below and see what RStudio does for you.
 
@@ -142,11 +146,14 @@ forbes$name
 # companies had sales over 100 billion? Which companies are from Canada? Which
 # Banking companies are from the United States?
 
-# We can subset our data using the subset() function. The syntax is subset(data,
-# condition). 
+# We can subset our data using the subset() function. 
+# The basic syntax is subset(data, condition). 
 
-# Show companies with sales greater than 100 billion:
+# Show companies with sales greater than 100 billion
 subset(forbes, sales > 100)
+
+# wrapping in View() results in a nicer display
+View(subset(forbes, sales > 100))
 
 # Show all Canadian countries: (notice we use two equal signs)
 subset(forbes, country == "Canada")
@@ -184,11 +191,12 @@ forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
 
 # (2) changing a variable from Factor to character
 
-is.factor(forbes$name) 
-is.character(forbes$name)
+# You have a column that is Factor and you want to be character
 
 # Convert name column to character using as.character
 forbes$name <- as.character(forbes$name)
+
+# Likewise, as.factor() will convert a character column to Factor.
 
 
 # (3) dropping columns (variables)
@@ -239,7 +247,7 @@ summary(forbes$profits)
 # A few other summary functions
 median(forbes$sales)
 sd(forbes$sales) # standard deviation
-range(forbes$sales) # returns min and max values
+range(forbes$sales) # returns min and max values; see also min() and max()
 quantile(forbes$sales) # 25th, 50th, 75th quantiles (percentiles)
 quantile(forbes$sales, probs=c(0.1,0.9)) # 10th and 90th quantiles
 summary(forbes$sales)
@@ -432,7 +440,7 @@ ggplot(forbes, aes(x = profits, y = marketvalue)) +
 
 # look at just positive profits
 ggplot(subset(forbes, profits > 0), aes(x = profits, y = marketvalue)) + 
-  geom_point() +
+  geom_point(alpha = 1/5) +
   geom_smooth() 
 
 # Can we summarize the relationship between profits and market value with a
@@ -440,25 +448,25 @@ ggplot(subset(forbes, profits > 0), aes(x = profits, y = marketvalue)) +
 
 # We can fit a linear model using the lm function (ie, regression)
 # lm(response ~ independent variables)
+# regress marketvalue on profits
 lm(marketvalue ~ profits, data=forbes, subset = profits > 0) 
 
-# save the model (ie, create a model object) and view a summary:
+# Better to save the model (ie, create a model object) and view a summary:
 mod <- lm(marketvalue ~ profits, data=forbes, subset = profits > 0) 
 # summary of the model
 summary(mod) 
 
 # Naive interpretation: Every additional 1 billion in profits is associated with
-# an increase of about 17 billion in additional marketvalue
+# an increase of about 17 billion in additional marketvalue (among those Forbes
+# 2000 companies that turned a profit)
 
-# This is just a simple demonstration. We should check model assumptions, make
-# sure no points are overly influential, etc. And maybe consult with an
-# economist. :)
+# This is just a simple demonstration. We should check model assumptions, check
+# for influential observations, perhaps transform the data, and maybe consult
+# with an economist.
 
 # To learn more, see my past workshop Linear Modeling with R 
 # http://data.library.virginia.edu/statlab/past-workshops/
 
-# remove the model object
-rm(mod)
 
 
 # chi-square test of independence
@@ -488,7 +496,6 @@ results$stdres # standardized residuals
 # Introductory Categorical Data Analysis in R
 # http://data.library.virginia.edu/statlab/past-workshops/
 
-rm(table_2.5, results)
 
 
 # Two-sample t-test 
@@ -535,6 +542,27 @@ summary(aov.out)
 # Stuff I'm not sure we'll have time for but you might like to review in your
 # free time.
 
+
+
+# Saving R objects --------------------------------------------------------
+
+# Let's say we plan to do extensive work with the Forbes 2000 data. It would be 
+# nice to not have to re-run the read.csv() function (plus any other data 
+# cleaning or analysis code) every time we want to work with the data in R. We
+# can do that by saving R objects as .Rda (or .Rdata) files using the save()
+# function. These are binary files that can be read into R using the load()
+# function. The nice thing about .Rda files is that they can store multiple data
+# objects.
+
+# For example, here's how we can save the forbes, USbanks, CatTable and mod
+# object in one .Rda file called "forbes_work.Rda":
+save(forbes, USbanks, CatTable, mod, file = "forbes_work.Rda")
+
+# Now remove those objects from memory:
+rm(forbes, USbanks, CatTable, mod)
+
+# Now load those objects into memory by simply loading "forbes_work.Rda":
+load("forbes_work.Rda")
 
 # Indexing brackets -------------------------------------------------------
 
@@ -676,7 +704,7 @@ areaCirc(r = 2:9)
 
 # Another example: coefficient of variation (CV)
 # The ratio of the standard deviation to the mean
-# It shows the extent of variability in relation to the mean of the population
+# It shows the extent of variability in relation to the mean of the sample
 
 cv <- function(x){
   ratio <- sd(x)/mean(x)
