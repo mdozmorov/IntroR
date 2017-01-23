@@ -135,7 +135,6 @@ dim(forbes)
 # To access or view just the column of a data frame, use a dollar sign after the
 # name of the data frame
 forbes$sales
-head(forbes$sales)
 
 # Try typing forbes$ below and see what RStudio does for you.
 
@@ -161,10 +160,18 @@ subset(forbes, country == "Canada")
 # Show Banking companies in the United States: (use & for AND, use | for OR)
 subset(forbes, country == "United States" & category == "Banking")
 
-# We can also select certain columns. For example:
+# Show multiple equalities using %in% operator:
+subset(forbes, country %in% c("Mexico","Ireland","Denmark"))
+subset(forbes, country %in% c("Mexico","Ireland","Denmark") & category == "Banking")
+
+
+# We can also select certain columns. 
+# subset(data, condition, columns)
+# For example:
 subset(forbes, sales > 100, c(name, sales))
+
+# columns next to one another can be spanned with a ":"
 subset(forbes, sales > 100 & country != "United States", sales:marketvalue)
-subset(forbes, sales > 100 & country != "United States", name:category)
 
 # We can always save our subsetted data as a new object:
 USbanks <- subset(forbes, country == "United States" & category == "Banking")
@@ -176,20 +183,34 @@ USbanks <- subset(forbes, country == "United States" & category == "Banking")
 
 # Four common data manipulation tasks:
 
-# (1) Deriving new columns (or variables)
 
-# Subtract profits from sales to create a new column caled totalcosts:
+# (1) Deriving new columns (or variables) based on calculations
+
+# Notice below we just add whatever column name we want to create after the
+# dollar sign and perform the calculation.
+
+# Subtract profits from sales to create a new column called totalcosts:
 forbes$totalcosts <- forbes$sales - forbes$profits
 
 # Add a new column for log-transformed sales
 forbes$logsales <- log(forbes$sales)
 
-# create an indicator for US or non-US company using ifelse function
+
+# (2) creating an indicator variable
+
+# An indicator variable takes two values, such as 0 and 1. "Is company
+# profitable? 1 if yes, 0 otherwise." We can use the ifelse() function for this.
+
+# create an indicator for profits. If greater than 0, set to 1, otherwise 0. 
 # syntax: ifelse(condition, action if TRUE, action if FALSE)
-forbes$US <- ifelse(forbes$country=="United States", "US", "Not US")
+forbes$profitable <- ifelse(forbes$profits > 0, 1, 0)
+
+# create an indicator for US or Foreign company using ifelse function
+# syntax: ifelse(condition, action if TRUE, action if FALSE)
+forbes$US <- ifelse(forbes$country=="United States", "US", "Foreign")
 
 
-# (2) changing a variable from Factor to character
+# (3) changing a variable from Factor to character
 
 # You have a column that is Factor and you want to be character
 
@@ -199,23 +220,13 @@ forbes$name <- as.character(forbes$name)
 # Likewise, as.factor() will convert a character column to Factor.
 
 
-# (3) dropping columns (variables)
+# (4) dropping columns (variables)
 
 forbes$totalcosts <- NULL
 forbes$logsales <- NULL
+forbes$profitable <- NULL
 
 
-# (4) Recode a continuous variable into categories. 
-
-# Here we recode sales into four categories: (0,5], (5,10], (10,100], (100,500]
-# using the cut() function
-forbes$salesCat <- cut(forbes$sales, breaks = c(0,5,10,100,500))
-summary(forbes$salesCat)
-
-# We can add labels:
-forbes$salesCat <- cut(forbes$sales, breaks = c(0,5,10,100,500), 
-                       labels = c("small","mid-small","mid-large","large"))
-summary(forbes$salesCat)
 
 # YOUR TURN! Add a column called salesM that is for sales in millions instead of
 # billions. (ie, multiply by 1000)
@@ -244,13 +255,13 @@ mean(forbes$profits, na.rm = TRUE)
 # How many missing?
 summary(forbes$profits)
 
+# Which companies have missing?
+subset(forbes, is.na(profits))
+
 # A few other summary functions
 median(forbes$sales)
 sd(forbes$sales) # standard deviation
 range(forbes$sales) # returns min and max values; see also min() and max()
-quantile(forbes$sales) # 25th, 50th, 75th quantiles (percentiles)
-quantile(forbes$sales, probs=c(0.1,0.9)) # 10th and 90th quantiles
-summary(forbes$sales)
 
 # Counting number of conditions satisfied. 
 
@@ -286,7 +297,7 @@ mean(forbes$profits < 0, na.rm = TRUE)
 # for contingency tables (or cross tabs) use the table function
 # synatx: table(row variable, column variable)
 
-# cross tab of categories vs. US/Non-US countries
+# cross tab of categories vs. US/Foreign countries
 table(forbes$category, forbes$US)
 
 # calculate percents with the prop.table() function.
@@ -308,7 +319,7 @@ aggregate(profits ~ category, data=forbes, median)
 # mean sales by country
 aggregate(sales ~ country, forbes, mean)
 
-# mean sales by US/Not US and category
+# mean sales by US/Foreign and category
 aggregate(sales ~ US + category, forbes, mean)
 
 
@@ -347,8 +358,8 @@ plot(log(marketvalue) ~ log(assets), data=forbes,
 # Histogram of market value
 hist(forbes$marketvalue) # skew
 hist(log(forbes$marketvalue)) # more symmetric
-hist(log(forbes$marketvalue),prob=TRUE) # show probability densities
-hist(log(forbes$marketvalue),prob=TRUE, breaks=20) # more bins
+hist(log(forbes$marketvalue), prob=TRUE) # show probability densities
+hist(log(forbes$marketvalue), prob=TRUE, breaks=20) # more bins
 
 
 # boxplots
@@ -448,10 +459,7 @@ ggplot(subset(forbes, profits > 0), aes(x = profits, y = marketvalue)) +
 
 # We can fit a linear model using the lm function (ie, regression)
 # lm(response ~ independent variables)
-# regress marketvalue on profits
-lm(marketvalue ~ profits, data=forbes, subset = profits > 0) 
-
-# Better to save the model (ie, create a model object) and view a summary:
+# regress marketvalue on profits, but only where profits > 0, and save to mod
 mod <- lm(marketvalue ~ profits, data=forbes, subset = profits > 0) 
 # summary of the model
 summary(mod) 
@@ -630,6 +638,23 @@ nrow(forbes)
 nrow(forbesComplete)
 
 rm(forbesComplete)
+
+
+
+
+# Recode a continuous variable into categories ----------------------------
+
+
+# Here we recode sales into four categories: (0,5], (5,10], (10,100], (100,500]
+# using the cut() function
+forbes$salesCat <- cut(forbes$sales, breaks = c(0,5,10,100,500))
+summary(forbes$salesCat)
+
+# We can add labels:
+forbes$salesCat <- cut(forbes$sales, breaks = c(0,5,10,100,500), 
+                       labels = c("small","mid-small","mid-large","large"))
+summary(forbes$salesCat)
+
 
 
 # hypothesis test and confidence interval ---------------------------------
